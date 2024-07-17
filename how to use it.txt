@@ -1,0 +1,11 @@
+﻿1. a,s,d,z,x,c mudam o ângulo da câmera
+2. botao esquerdo do mouse - zoom in / direito - zoom out
+3. r - volta a visualizar de cima como no início
+4. setas do teclado - andar
+5. ao encostar num inimigo no mapa vai-se ao modo de batalha, lá deve-se se aproximar do adversário e apertar q para ataca-lo.
+
+1. a,s,d,z,x,c change the camera angle
+2. left mouse buttom - zoom in /  right - zoom out
+3. r - reset the camera position
+4. keyboard arrows - move
+5. When touching an enemy on the field the battle mode beggins, there you should get glose to your opponent and press q to attack it.
