@@ -46,7 +46,7 @@ void display()
     }
 }
 
-void teclado(unsigned char tecla,int x,int y){
+void keyboard(unsigned char tecla,int x,int y){
     switch (modo)
     {
     case MAPA:
@@ -57,7 +57,7 @@ void teclado(unsigned char tecla,int x,int y){
     }
 }
 
-void setas(int seta,int x,int y)
+void arrows(int seta,int x,int y)
 {
     switch (modo)
     {
@@ -89,30 +89,29 @@ void initGlut(int* a,char** b)
     glutInitWindowSize(500,500);
     glutCreateWindow("Termak 3D");
     glutDisplayFunc(display);
-    glutKeyboardFunc(teclado);
+    glutKeyboardFunc(keyboard);
     glutMouseFunc(mouse);
-    glutSpecialFunc(setas);
+    glutSpecialFunc(arrows);
     glutIdleFunc(display);
 }
 
+/* function called when starting the game without saved progress */
 void initialize()
-    loadMap("map0");
 {
-    initGlut(&a,b);
-    initializeModels();
-    initialize();
+    loadMap("map0");
+}
 
-/* função a construir imaginada para iniciar o jogo a partir de um progresso salvo.*/
-void carrega()
+/* function to load the game from saved progress - not implemented */
+void loadGame()
 {
 }
 
 int main(int a,char** b)
 {
     srand(time(0));
-    inicializacoesglut(&a,b);
-    inicializacoesdemodelos();
-    inicializa();
+    initGlut(&a,b);
+    initializeModels();
+    initialize();
     glutMainLoop();
     return 0;
 }
