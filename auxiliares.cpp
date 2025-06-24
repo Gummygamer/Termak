@@ -20,7 +20,7 @@ vector<string> explode(string s,char c)
 }
 
 // fun��o que lembra a pr�pria strcat
-void colocaextedir(char* dir,char* arq,char* ext,char** alvo){
+void concatDirExt(char* dir,char* arq,char* ext,char** alvo){
     *alvo = (char*) malloc((strlen(dir)+strlen(arq)+strlen(ext) + 1)*sizeof(char));
     printf("aloca��o ext ok\n");
     sprintf(*alvo, "%s%s%s", dir, arq, ext);
@@ -30,7 +30,7 @@ void colocaextedir(char* dir,char* arq,char* ext,char** alvo){
 
 /* fun��o que carrega o arquivo de nome arq e coloca seu conte�do em *alvo retornando seu
 tamanho */
-char* carregaarquivo(const char* arq){
+char* loadFile(const char* arq){
     int cont=0;
 
     /*while(arq[cont]!='.'){
@@ -74,13 +74,13 @@ char* carregaarquivo(const char* arq){
     return ret;
 }
 
-void escreveemarquivo(char* arq,char* conteudo)
+void writeToFile(char* arq,char* conteudo)
 {
     FILE* arqu = fopen(arq,"w");
     fprintf(arqu, "%s", conteudo);
 }
 /* fun��o que converte uma string para int,em caso de char inv�lido retorna -1 */
-int paraint(string s)
+int stringToInt(string s)
 {
     istringstream stream(s);
     int ret;

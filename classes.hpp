@@ -2,48 +2,48 @@
 #include "structs.hpp"
 
 
-class Lutador{
+class Fighter{
 private:
     double HP;
     double ataque;
     double defesa;
     int alcance;
     int id;
-    //Corpo* modelo;
+    //Body* modelo;
 public:
-    Lutador(double HP,int atq,int def,int alcance,int id/*,Corpo* */);
-    void recebedano(Lutador*);
-    void evolui(Lutador*);
+    Fighter(double HP,int atq,int def,int alcance,int id/*,Body* */);
+    void recebedano(Fighter*);
+    void evolui(Fighter*);
     double getHP();
-    //Corpo* getmodelo();
+    //Body* getmodelo();
     int getid();
     int getalcance();
 };
 
-/* class SetofLutadores{
+/* class SetofFighteres{
 	private:
-	 Lutador** lutadores;
+	 Fighter** lutadores;
 	 int tamanho;
 	 int atual;
 	public:
-	 SetofLutadores(Lutador**,int);
+	 SetofFighteres(Fighter**,int);
 	 int gettamanho(void);
-	 Lutador* getprox(void);
+	 Fighter* getprox(void);
 }; */
 
 
-class Corpo{
+class Body{
 private:
-    vector<Elipzoide> bolas;
+    vector<Ellipsoid> bolas;
     int tamanho;
 public:
-    Corpo(vector<Elipzoide>,int);
-    Corpo(string);
-    void testaCorpo();
-    vector<Elipzoide> getbolas();
+    Body(vector<Ellipsoid>,int);
+    Body(string);
+    void testaBody();
+    vector<Ellipsoid> getbolas();
     int gettamanho();
 
-    Elipzoide elip(string);
-    Cor cor(string);
-    //Corpo* carregar(FILE*);
+    Ellipsoid elip(string);
+    Color cor(string);
+    //Body* carregar(FILE*);
 };

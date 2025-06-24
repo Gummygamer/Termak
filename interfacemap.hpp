@@ -15,7 +15,7 @@ int modmonst;
 void imprime(string s){
     switch (s[0]){
     case '.':
-        mostrabloco();
+        showBlock();
         break;
 
     case '*':
@@ -38,22 +38,22 @@ void imprimeln(string s){
     ln();
 }
 /* Function in charge of refreshing the map */
-/* função encarregada de atualizar o mapa */
-void mostramapa(){
-    int cont1,cont2;
-    for (cont1=0; cont1< ymapa;++cont1){
-        for (cont2=0;cont2 < xmapa;++cont2){
-            glPushMatrix();
-            glRotatef(-90*mapadejogo[cont1][cont2].orientacao,0,1,0);
-            glTranslatef(-(1-mapadejogo[cont1][cont2].interpolacao)*DIMCASA,0,0);
-            switch (mapadejogo[cont1][cont2].rotulo){
-            case TELEPORT:
-            case VAZIO:
-                imprime(" ");
-                break;
-            case BLOCO:
-                imprime(".");
-                break;
+void showMap(){
+            glRotatef(-90*gameMap[cont1][cont2].orientacao,0,1,0);
+            glTranslatef(-(1-gameMap[cont1][cont2].interpolacao)*DIMCASA,0,0);
+            switch (gameMap[cont1][cont2].rotulo){
+		switch(gameMap[cont1][cont2].conteudo[0])
+			case 'r': modmonst = MODRAT;
+			case 'g': modmonst = MODCAT;
+			case 'e': modmonst = MODSCORPION;
+		//puts(gameMap[cont1][cont2].conteudo[0]);
+void show_map(){
+    showMap();
+    atualizamonsters();
+        avaliamov(lhero,chero,CIMA);
+        avaliamov(lhero,chero,BAIXO);
+        avaliamov(lhero,chero,ESQ);
+        avaliamov(lhero,chero,DIR);
             case MONSTRO:
                 interpolar(cont1,cont2);
 		switch(mapadejogo[cont1][cont2].conteudo[0])

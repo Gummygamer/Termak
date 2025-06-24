@@ -16,7 +16,7 @@ int fpssum = 0;
 int fpsavg = 0;
 int recalcount = 0;
 
-void mostra()
+void display()
 {
     clock_t tempoatual = clock();
     habzbuffer();
@@ -30,10 +30,10 @@ void mostra()
         switch (modo)
         {
         case MAPA:
-            mostra_map();
+            show_map();
             break;
         case BATALHA:
-            mostra_bat();
+            show_battle();
         }
     }
 
@@ -53,7 +53,7 @@ void teclado(unsigned char tecla,int x,int y){
         teclado_map(tecla,x,y);
         break;
     case BATALHA:
-        teclado_bat(tecla,x,y);
+        keyboard_battle(tecla,x,y);
     }
 }
 
@@ -65,7 +65,7 @@ void setas(int seta,int x,int y)
         setas_map(seta,x,y);
         break;
     case BATALHA:
-        setas_bat(seta,x,y);
+        arrows_battle(seta,x,y);
     }
 }
 
@@ -77,32 +77,32 @@ void mouse(int bot,int est,int x,int y)
         mouse_map(bot,est,x,y);
         break;
     case BATALHA:
-        mouse_bat(bot,est,x,y);
+        mouse_battle(bot,est,x,y);
     }
 }
 
-void inicializacoesglut(int* a,char** b)
+void initGlut(int* a,char** b)
 {
     glutInit(a,b);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_DEPTH | GLUT_RGB);
     glutInitWindowPosition(0,0);
     glutInitWindowSize(500,500);
     glutCreateWindow("Termak 3D");
-    glutDisplayFunc(mostra);
+    glutDisplayFunc(display);
     glutKeyboardFunc(teclado);
     glutMouseFunc(mouse);
     glutSpecialFunc(setas);
-    glutIdleFunc(mostra);
+    glutIdleFunc(display);
 }
 
-/* função chamada quando se inicia o jogo sem nenhum progresso salvo */
-void inicializa()
+void initialize()
+    loadMap("map0");
 {
-    carregamapa("map0");
-}
+    initGlut(&a,b);
+    initializeModels();
+    initialize();
 
-
-/* função a construir imaginada para iniciar o jogo a partir de um progresso salvo.*/
+/* funÃ§Ã£o a construir imaginada para iniciar o jogo a partir de um progresso salvo.*/
 void carrega()
 {
 }

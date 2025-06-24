@@ -13,26 +13,26 @@
 #define TESTEZ (fabs(zalvo - novoz) <= alcance)
 #define TESTELIM ((novox >= LIML) && (novox <= LIMU) && (novoz >= LIML) && (novoz <= LIMU))
 
-#define RATO 1
-#define GATO 2
-#define ESCORPIAO 3
+#define RAT 1
+#define CAT 2
+#define SCORPION 3
 
-double xheroi,yheroi,zheroi;
-double xmonstro,ymonstro,zmonstro;
+double heroX,heroY,heroZ;
+double monsterX,monsterY,monsterZ;
 
-Lutador* her = new Lutador(15,10,10,5,666);
-Lutador* monst;
+Fighter* her = new Fighter(15,10,10,5,666);
+Fighter* monst;
 
 
 
-void testefimdebat(){
+void checkBattleEnd(){
     if (her -> getHP() <= 0){
         cout << "GAME OVER" << endl;
         exit(0);
     }
 
     if (monst -> getHP() <= 0){
-        if (monst -> getid() == GATO){
+        if (monst -> getid() == CAT){
             cout << "THE END" << endl;
             exit(0);
         }
@@ -45,34 +45,34 @@ void testefimdebat(){
     }
 }
 
-void mostrainimigo(){
-    /*if (monst -> getid() == GATO){
+void showEnemy(){
+    /*if (monst -> getid() == CAT){
         //glTranslatef(0,9.9,0);
-        glCallList(MODGATO);
+        glCallList(MODCAT);
     }
-    else glCallList(MODRATO);*/
+    else glCallList(MODRAT);*/
 
     switch(monst -> getid())
     {
-	case GATO: glCallList(MODGATO);
+	case CAT: glCallList(MODCAT);
 		   break;
-	case RATO: glCallList(MODRATO);
+	case RAT: glCallList(MODRAT);
 		   break;
-	case ESCORPIAO: glCallList(MODESCORPIAO);
+	case SCORPION: glCallList(MODSCORPION);
     }
 }
 
 
-void movemonstro()
+void moveMonster()
 {
     int dir = rand() % 4;
-    double novox = xmonstro;
-    double novoz = zmonstro;
-    double xalvo = xheroi;
-    double zalvo = zheroi;
+    double novox = monsterX;
+    double novoz = monsterZ;
+    double xalvo = heroX;
+    double zalvo = heroZ;
     double alcance = monst -> getalcance()*PASSO;
 
-    //if (monst -> getid() == GATO) alcance = 10*PASSO;
+    //if (monst -> getid() == CAT) alcance = 10*PASSO;
 
     switch (dir)
     {
@@ -92,19 +92,19 @@ void movemonstro()
     if (TESTEX && TESTEZ)
     {
         her -> recebedano(monst);
-        testefimdebat();
+        checkBattleEnd();
     }
     else
     {
         if (TESTELIM)
         {
-            xmonstro = novox;
-            zmonstro = novoz;
+            monsterX = novox;
+            monsterZ = novoz;
         }
     }
 }
 
-void mostra_bat()
+void show_battle()
 {
 
     glClearColor(0,0,0,1);
@@ -118,48 +118,48 @@ void mostra_bat()
     glRotatef(alfay,0,1,0);
     glRotatef(alfaz,0,0,1);
 
-    mostraplano();
+    showPlane();
 
     glPushMatrix();
-    glTranslatef(xheroi,yheroi,zheroi);
+    glTranslatef(heroX,heroY,heroZ);
     glCallList(MODHEROI);
     glTranslatef(15,10,15);
     //glScalef(ESCALA_BARRA,ESCALA_BARRA,her -> getHP()*ESCALA_BARRA);
-    mostrabarraHP(her -> getHP());
+    showHPBar(her -> getHP());
     glPopMatrix();
 
     glPushMatrix();
-    glTranslatef(xmonstro,ymonstro,zmonstro);
-    mostrainimigo();
+    glTranslatef(monsterX,monsterY,monsterZ);
+    showEnemy();
     glTranslatef(15,10,15);
-    //if(monst -> getid() == GATO) glTranslatef(0,15,-15);
+    //if(monst -> getid() == CAT) glTranslatef(0,15,-15);
     //glScalef(ESCALA_BARRA,ESCALA_BARRA,monst -> getHP()*ESCALA_BARRA);
-    mostrabarraHP(monst -> getHP());
+    showHPBar(monst -> getHP());
     glPopMatrix();
     glutSwapBuffers();
 
-    movemonstro();
+    moveMonster();
 }
 
-void teclado_bat(unsigned char tecla,int x,int y)
+void keyboard_battle(unsigned char tecla,int x,int y)
 {
 
-    double xalvo = xmonstro;
-    double zalvo = zmonstro;
-    double novox = xheroi;
-    double novoz = zheroi;
+    double xalvo = monsterX;
+    double zalvo = monsterZ;
+    double novox = heroX;
+    double novoz = heroZ;
     double alcance = 2*monst->getalcance()*PASSO;
 
     x=y;
 
-    //if (monst -> getid() == GATO) alcance = 15*PASSO;
+    //if (monst -> getid() == CAT) alcance = 15*PASSO;
 
     switch (tecla){
     case 'q':
         if (TESTEX && TESTEZ)
         {
             monst -> recebedano(her);
-            testefimdebat();
+            checkBattleEnd();
         }
         break;
     case 'a':
@@ -185,38 +185,38 @@ void teclado_bat(unsigned char tecla,int x,int y)
     }
 }
 
-void setas_bat(int seta,int x,int y)
+void arrows_battle(int seta,int x,int y)
 {
     x = y;
 
-    double xalvo = xmonstro;
-    double zalvo = zmonstro;
-    double novox = xheroi;
-    double novoz = zheroi;
+    double xalvo = monsterX;
+    double zalvo = monsterZ;
+    double novox = heroX;
+    double novoz = heroZ;
     double alcance = PASSO;
 
-    if (monst -> getid() == GATO) alcance = 3*PASSO;
+    if (monst -> getid() == CAT) alcance = 3*PASSO;
 
     if (!(TESTEX && TESTEZ))
     {
         switch (seta)
         {
         case GLUT_KEY_UP:
-            xheroi += PASSO;
+            heroX += PASSO;
             break;
         case GLUT_KEY_DOWN:
-            xheroi -= PASSO;
+            heroX -= PASSO;
             break;
         case GLUT_KEY_RIGHT:
-            zheroi += PASSO;
+            heroZ += PASSO;
             break;
         case GLUT_KEY_LEFT:
-            zheroi -= PASSO;
+            heroZ -= PASSO;
         }
     }
 }
 
-void mouse_bat(int bot,int est,int x,int y)
+void mouse_battle(int bot,int est,int x,int y)
 {
     est = x = y;
 

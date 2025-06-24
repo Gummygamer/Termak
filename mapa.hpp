@@ -22,12 +22,12 @@ typedef struct{
 
 typedef CASA* LINHA;
 
-CASA **mapadejogo;
+CASA **gameMap;
 char *vetormapa;
-int lheroi,cheroi;
+int lhero,chero;
 int xmapa,ymapa;
 /* This function analises the string extracted from the map file, converts the map's line number into str and returns the characteres number in it. */
-/* função que analisa a string extraída do arquivo de mapa, coloca o número de linhas do mapa em str e retorna o  		número de dígitos */
+/* function that analyzes the map file string, places the number of lines in str and returns the digit count */
 string extraidim1()
 {
     char atual;
@@ -48,7 +48,7 @@ string extraidim1()
     return ret;
 }
 
-/* análoga à anterior para o número de colunas */
+/* analogous to the previous function for the column count */
 
 string extraidim2(){
     char atual = 'o';
@@ -73,8 +73,7 @@ string extraidim2(){
 
 
 
-/* função que coloca a referência a arquivo correspondente ao elemento a da seq. em
-mapadejogo[b][c] ela coloca em *d o tamanho desse nome de arq. + 1 */
+/* function that adds a reference to the file corresponding to element a of the sequence into gameMap[b][c] and stores its name size in *d */
 void analisaconteudo(int a,int b,int c,int *d){
     int cont=a+1;
     char arquivo[100];
@@ -89,63 +88,63 @@ void analisaconteudo(int a,int b,int c,int *d){
     }
     arquivo[*d] = '\0';
     *d=*d+1;
-    mapadejogo[b][c].conteudo=(char*) malloc(strlen(arquivo));
-    strcpy(mapadejogo[b][c].conteudo,arquivo);
+    gameMap[b][c].conteudo=(char*) malloc(strlen(arquivo));
+    strcpy(gameMap[b][c].conteudo,arquivo);
 }
 
-/* função que traduz o elemento a da seq. para mapadejogo[b][c] */
+/* function that converts sequence element a into gameMap[b][c] */
 int analisacharmapabruto(int a,int b,int c,int *d){
     int rot=0;
     switch (vetormapa[a]){
     case '.':
-        rot=mapadejogo[b][c].rotulo=BLOCO;
+        rot=gameMap[b][c].rotulo=BLOCO;
         break;
     case 'v':
-        rot=mapadejogo[b][c].rotulo=VAZIO;
+        rot=gameMap[b][c].rotulo=VAZIO;
         break;
     case 'h':
-        rot=mapadejogo[b][c].rotulo=HEROI;
-        lheroi = b;
-        cheroi = c;
+        rot=gameMap[b][c].rotulo=HEROI;
+        lhero = b;
+        chero = c;
         break;
     case '-':
-        rot=mapadejogo[b][c].rotulo=TELEPORT;
+        rot=gameMap[b][c].rotulo=TELEPORT;
         analisaconteudo(a,b,c,d);
         break;
     case '*':
-        rot=mapadejogo[b][c].rotulo=MONSTRO;
+        rot=gameMap[b][c].rotulo=MONSTRO;
         analisaconteudo(a,b,c,d);
     }
     return rot;
 }
 
-/* função encarregada de alocar um mapa carregado de arquivos do HD na RAM segundo a estrutura
+/* function responsible for allocating a map loaded from disk into RAM using the structure defined above */
 	de casas declarada no início do código*/
-void carregamapa(string s)
+void loadMap(string s)
 {
 
     int cont,cont1,cont2,tamydomap,tamxdomap,inu=0,rot;
     string xdomap,ydomap,arquivo;
-    //colocaextedir("mapas/",a,".map",&arquivo);
+    //concatDirExt("mapas/",a,".map",&arquivo);
 
     arquivo = "mapas/" + s + ".map";
 
-    vetormapa = carregaarquivo(arquivo.c_str());
+    vetormapa = loadFile(arquivo.c_str());
 
     //printf(".map ok\n");
     ydomap = extraidim1();
     xdomap = extraidim2();
 
-    ymapa = paraint(ydomap);
-    xmapa = paraint(xdomap);
+    ymapa = stringToInt(ydomap);
+    xmapa = stringToInt(xdomap);
 
     tamydomap = ydomap.size();
     tamxdomap = xdomap.size();
 
-    /* se aloca o mapa de jogo atual, o tipo LINHA se fez necessária para isso */
-    mapadejogo=(LINHA*) malloc(ymapa*sizeof(LINHA));
+    /* this part converts the sequence loaded from file into gameMap cells */
+    gameMap=(LINHA*) malloc(ymapa*sizeof(LINHA));
     for (cont=0;cont<ymapa;cont++)
-        mapadejogo[cont]=(CASA*) malloc(xmapa*sizeof(CASA));
+        gameMap[cont]=(CASA*) malloc(xmapa*sizeof(CASA));
 
     cont=tamxdomap+tamydomap+2;
     /* essa parte traduz a seqüência carregada do arquivo em casas do mapa de jogo.*/
@@ -154,66 +153,65 @@ void carregamapa(string s)
             if (rot==TELEPORT || rot==MONSTRO) cont+=inu;
             cont++;
 
-            mapadejogo[cont1][cont2].interpolacao = 1;
-            mapadejogo[cont1][cont2].orientacao = DIR;
+            gameMap[cont1][cont2].interpolacao = 1;
+            gameMap[cont1][cont2].orientacao = DIR;
         }
     free(vetormapa);
 }
 
-/* as funções a seguir avaliam se há determinado elemento em
-mapadejogo[a][b] */
+/* the following functions evaluate whether gameMap[a][b] contains a given element */
 
 bool bloco(int a,int b){
-    if (mapadejogo[a][b].rotulo==BLOCO) return true;
+    if (gameMap[a][b].rotulo==BLOCO) return true;
     return false;
 }
 
-bool heroi(int a,int b){
-    if (mapadejogo[a][b].rotulo==HEROI) return true;
+bool hero(int a,int b){
+    if (gameMap[a][b].rotulo==HEROI) return true;
     return false;
 }
-bool monstro(int a,int b){
-    if (mapadejogo[a][b].rotulo==MONSTRO) return true;
+bool monster(int a,int b){
+    if (gameMap[a][b].rotulo==MONSTRO) return true;
     return false;
 }
 bool tel(int a,int b){
-    if (mapadejogo[a][b].rotulo==TELEPORT) return true;
+    if (gameMap[a][b].rotulo==TELEPORT) return true;
     return false;
 }
 bool vazio(int a,int b){
-    if (mapadejogo[a][b].rotulo==VAZIO) return true;
+    if (gameMap[a][b].rotulo==VAZIO) return true;
     return false;
 }
 
-void batalha(char* a){
+void battle(char* a){
     reseta();
 
     /*if (a[0] == 'g'){
-        monst = new Lutador(100,10,50,GATO);
+        monst = new Fighter(100,10,50,CAT);
     }
     else{
-        monst = new Lutador(15,10,50,RATO);
+        monst = new Fighter(15,10,50,RAT);
     }*/
 
     switch(a[0])
     {
-	case 'g': monst = new Lutador(100,10,50,10,GATO);
+	case 'g': monst = new Fighter(100,10,50,10,CAT);
 		  break;
-	case 'r': monst = new Lutador(15,10,50,3,RATO);
+	case 'r': monst = new Fighter(15,10,50,3,RAT);
                   break;
-	case 'e': monst = new Lutador(15,20,50,4,ESCORPIAO);
+	case 'e': monst = new Fighter(15,20,50,4,SCORPION);
         default: break;
     }
 
     printf("HP = %f\n",her -> getHP());
 
-    xheroi = -50;
-    yheroi = 10;
-    zheroi = -50;
+    heroX = -50;
+    heroY = 10;
+    heroZ = -50;
 
-    xmonstro = 50;
-    ymonstro = 10;
-    zmonstro = 50;
+    monsterX = 50;
+    monsterY = 10;
+    monsterZ = 50;
 
     modo = BATALHA;
 
@@ -237,58 +235,58 @@ void avaliamov(int lin,int col,int dir){
         break;
     }
 
-    if (mapadejogo[lin][col].interpolacao > 1-DELTA){
+    if (gameMap[lin][col].interpolacao > 1-DELTA){
 
-        if (heroi(lin,col)){
+        if (hero(lin,col)){
 
             if (bloco(novalin,novacol)){
-                mapadejogo[lin][col].orientacao = dir;
+                gameMap[lin][col].orientacao = dir;
                 return;
             }
 
             if (vazio(novalin,novacol)){
-                mapadejogo[lin][col].rotulo = VAZIO;
-                mapadejogo[novalin][novacol].rotulo = HEROI;
-                mapadejogo[novalin][novacol].orientacao = dir;
-                mapadejogo[novalin][novacol].interpolacao = 0;
-                lheroi = novalin;
-                cheroi = novacol;
+                gameMap[lin][col].rotulo = VAZIO;
+                gameMap[novalin][novacol].rotulo = HEROI;
+                gameMap[novalin][novacol].orientacao = dir;
+                gameMap[novalin][novacol].interpolacao = 0;
+                lhero = novalin;
+                chero = novacol;
                 return;
             }
 
-            if (monstro(novalin,novacol)){
-                mapadejogo[lin][col].orientacao = dir;
-                batalha(mapadejogo[novalin][novacol].conteudo);
-                mapadejogo[novalin][novacol].rotulo = VAZIO;
+            if (monster(novalin,novacol)){
+                gameMap[lin][col].orientacao = dir;
+                battle(gameMap[novalin][novacol].conteudo);
+                gameMap[novalin][novacol].rotulo = VAZIO;
                 return;
             }
 
             if (tel(novalin,novacol)){
-                carregamapa(mapadejogo[novalin][novacol].conteudo);
-                mapadejogo[lheroi][cheroi].orientacao = dir;
+                loadMap(gameMap[novalin][novacol].conteudo);
+                gameMap[lhero][chero].orientacao = dir;
                 return;
             }
         }
 
-        if (monstro(lin,col)){
+        if (monster(lin,col)){
             if (bloco(novalin,novacol)){
-                mapadejogo[lin][col].orientacao = dir;
+                gameMap[lin][col].orientacao = dir;
                 return;
             }
 
             if (vazio(novalin,novacol)){
-                mapadejogo[lin][col].rotulo = VAZIO;
-                mapadejogo[novalin][novacol].rotulo = MONSTRO;
-                mapadejogo[novalin][novacol].orientacao = dir;
-                mapadejogo[novalin][novacol].conteudo = mapadejogo[lin][col].conteudo;
-                mapadejogo[novalin][novacol].interpolacao = 0;
+                gameMap[lin][col].rotulo = VAZIO;
+                gameMap[novalin][novacol].rotulo = MONSTRO;
+                gameMap[novalin][novacol].orientacao = dir;
+                gameMap[novalin][novacol].conteudo = gameMap[lin][col].conteudo;
+                gameMap[novalin][novacol].interpolacao = 0;
                 return;
             }
 
-            if (heroi(novalin,novacol)){
-                char* nome = mapadejogo[lin][col].conteudo;
-                batalha(nome);
-                mapadejogo[lin][col].rotulo = VAZIO;
+            if (hero(novalin,novacol)){
+                char* nome = gameMap[lin][col].conteudo;
+                battle(nome);
+                gameMap[lin][col].rotulo = VAZIO;
                 return;
             }
         }
@@ -297,22 +295,22 @@ void avaliamov(int lin,int col,int dir){
 
 }
 
-/* função que faz o monstro em mapadejogo[a][b] se mover */
-void avaliamovmonstro(int a,int b){
+/* function that makes the monster at gameMap[a][b] move */
+void avaliamovmonster(int a,int b){
     int escolha=rand()%4;
     avaliamov(a,b,escolha);
 }
 
-/* função que atualiza a posição dos monstros no mapa alterando a var mapadejogo */
-void atualizamonstros(){
+/* function that updates monster positions on the map using gameMap */
+void atualizamonsters(){
     int cont1,cont2;
     for (cont1=0;cont1<ymapa;cont1++) for (cont2=0;cont2<xmapa;cont2++)
-            if (monstro(cont1,cont2)) avaliamovmonstro(cont1,cont2);
+            if (monster(cont1,cont2)) avaliamovmonster(cont1,cont2);
 }
 
 void interpolar(int lin,int col){
-    if (mapadejogo[lin][col].interpolacao < 1){
-        mapadejogo[lin][col].interpolacao+=DELTA;
+    if (gameMap[lin][col].interpolacao < 1){
+        gameMap[lin][col].interpolacao+=DELTA;
     }
 }
 
