@@ -119,7 +119,6 @@ int analisacharmapabruto(int a,int b,int c,int *d){
 }
 
 /* function responsible for allocating a map loaded from disk into RAM using the structure defined above */
-	de casas declarada no início do código*/
 void loadMap(string s)
 {
 
