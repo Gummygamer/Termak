@@ -86,8 +86,11 @@ void initGlut(int* a,char** b)
     glutInit(a,b);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_DEPTH | GLUT_RGB);
     glutInitWindowPosition(0,0);
-    glutInitWindowSize(500,500);
+    int width = glutGet(GLUT_SCREEN_WIDTH);
+    int height = glutGet(GLUT_SCREEN_HEIGHT);
+    glutInitWindowSize(width, height);
     glutCreateWindow("Termak 3D");
+    glutFullScreen();
     glutDisplayFunc(display);
     glutKeyboardFunc(keyboard);
     glutMouseFunc(mouse);

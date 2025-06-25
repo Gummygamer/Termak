@@ -90,7 +90,10 @@ inline void show_map(){
         case DOWN:  tz += DIMCASA; break;
     }
 
-    gluPerspective(80,1,0.05,200);
+    int width = glutGet(GLUT_WINDOW_WIDTH);
+    int height = glutGet(GLUT_WINDOW_HEIGHT);
+    double aspect = width / (double) height;
+    gluPerspective(80,aspect,0.05,200);
     gluLookAt(hx,hy,hz,tx,ty,tz,0,1,0);
 
     glMatrixMode(GL_MODELVIEW);
