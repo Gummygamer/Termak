@@ -40,7 +40,7 @@ public:
     Body(vector<Ellipsoid>,int);
     Body(string);
     void testaBody();
-    vector<Ellipsoid> getbolas();
+    const vector<Ellipsoid>& getbolas() const;
     int gettamanho();
 
     Ellipsoid elip(string);

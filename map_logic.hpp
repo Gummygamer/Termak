@@ -88,7 +88,7 @@ void analyzeContent(int a,int b,int c,int *d){
     }
     arquivo[*d] = '\0';
     *d=*d+1;
-    gameMap[b][c].conteudo=(char*) malloc(strlen(arquivo));
+    gameMap[b][c].conteudo=(char*) malloc(strlen(arquivo) + 1);
     strcpy(gameMap[b][c].conteudo,arquivo);
 }
 
@@ -118,44 +118,64 @@ int analyzeRawMapChar(int a,int b,int c,int *d){
     return rot;
 }
 
-/* function responsible for allocating a map loaded from disk into RAM using the structure defined above */
+/* function responsible for procedurally generating a map when the game loads */
 void loadMap(string s)
 {
+    int cont, cont1, cont2;
 
-    int cont,cont1,cont2,tamydomap,tamxdomap,inu=0,rot;
-    string xdomap,ydomap,arquivo;
-    //concatDirExt("maps/",a,".map",&arquivo);
+    /* create a pseudo random seed based on the map name */
+    unsigned seed = 0;
+    for(char c : s) seed = seed * 131 + c;
+    srand(time(0) + seed);
 
-    arquivo = "maps/" + s + ".map";
+    /* generate random dimensions */
+    ymapa = 8 + rand() % 5;
+    xmapa = 8 + rand() % 5;
 
-    vetormapa = loadFile(arquivo.c_str());
+    gameMap = (LINHA*) malloc(ymapa * sizeof(LINHA));
+    for (cont = 0; cont < ymapa; ++cont)
+        gameMap[cont] = (CASA*) malloc(xmapa * sizeof(CASA));
 
-    //printf(".map ok\n");
-    ydomap = extractDim1();
-    xdomap = extractDim2();
-
-    ymapa = stringToInt(ydomap);
-    xmapa = stringToInt(xdomap);
-
-    tamydomap = ydomap.size();
-    tamxdomap = xdomap.size();
-
-    /* this part converts the sequence loaded from file into gameMap cells */
-    gameMap=(LINHA*) malloc(ymapa*sizeof(LINHA));
-    for (cont=0;cont<ymapa;cont++)
-        gameMap[cont]=(CASA*) malloc(xmapa*sizeof(CASA));
-
-    cont=tamxdomap+tamydomap+2;
-    /* essa parte traduz a seqüência carregada do arquivo em casas do mapa de jogo.*/
-    for (cont1 = 0;cont1 < ymapa;++cont1) for (cont2 = 0;cont2 < xmapa;++cont2){
-            rot=analyzeRawMapChar(cont,cont1,cont2,&inu);
-            if (rot==TELEPORT || rot==MONSTER) cont+=inu;
-            cont++;
-
+    /* initialise the grid */
+    for (cont1 = 0; cont1 < ymapa; ++cont1) for (cont2 = 0; cont2 < xmapa; ++cont2){
+            gameMap[cont1][cont2].rotulo = EMPTY;
+            gameMap[cont1][cont2].conteudo = NULL;
             gameMap[cont1][cont2].interpolacao = 1;
             gameMap[cont1][cont2].orientacao = RIGHT;
         }
-    free(vetormapa);
+
+    /* place the hero */
+    lhero = rand() % ymapa;
+    chero = rand() % xmapa;
+    gameMap[lhero][chero].rotulo = HERO;
+
+    /* randomly add blocks */
+    for (cont1 = 0; cont1 < ymapa; ++cont1) for (cont2 = 0; cont2 < xmapa; ++cont2)
+            if (gameMap[cont1][cont2].rotulo == EMPTY && rand() % 100 < 20)
+                gameMap[cont1][cont2].rotulo = BLOCK;
+
+    /* add teleports to other maps */
+    int teleCount = 1 + rand() % 2;
+    for (cont = 0; cont < teleCount; ++cont){
+        int r1 = rand() % ymapa, r2 = rand() % xmapa;
+        if (gameMap[r1][r2].rotulo != EMPTY){ --cont; continue; }
+        gameMap[r1][r2].rotulo = TELEPORT;
+        string dest = "map" + to_string(rand() % 3);
+        gameMap[r1][r2].conteudo = (char*) malloc(dest.size() + 1);
+        strcpy(gameMap[r1][r2].conteudo, dest.c_str());
+    }
+
+    /* add a few monsters */
+    const char* monsters[] = {"rat", "cat", "scorpion"};
+    int monsterCount = (ymapa * xmapa) / 20;
+    for (cont = 0; cont < monsterCount; ++cont){
+        int r1 = rand() % ymapa, r2 = rand() % xmapa;
+        if (gameMap[r1][r2].rotulo != EMPTY){ --cont; continue; }
+        gameMap[r1][r2].rotulo = MONSTER;
+        const char* name = monsters[rand() % 3];
+        gameMap[r1][r2].conteudo = (char*) malloc(strlen(name) + 1);
+        strcpy(gameMap[r1][r2].conteudo, name);
+    }
 }
 
 /* the following functions evaluate whether gameMap[a][b] contains a given element */
