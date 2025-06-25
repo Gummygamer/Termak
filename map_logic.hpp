@@ -1,4 +1,7 @@
 #include <time.h>
+#include <string>
+#include <cstring>
+#include <cctype>
 
 #define UP 3
 #define DOWN 1
@@ -212,14 +215,23 @@ void battle(char* a){
         monst = new Fighter(15,10,50,RAT);
     }*/
 
-    switch(a[0])
-    {
-	case 'g': monst = new Fighter(100,10,50,10,CAT);
-		  break;
-	case 'r': monst = new Fighter(15,10,50,3,RAT);
-                  break;
-	case 'e': monst = new Fighter(15,20,50,4,SCORPION);
-        default: break;
+    if (monst){
+        delete monst;
+        monst = nullptr;
+    }
+
+    std::string name = a ? std::string(a) : "";
+    if (!name.empty()) name[0] = std::tolower(name[0]);
+
+    if (name.size() && (name[0] == 'c' || name[0] == 'g')){
+        monst = new Fighter(100,10,50,10,CAT);
+    } else if (name.size() && name[0] == 'r'){
+        monst = new Fighter(15,10,50,3,RAT);
+    } else if (name.size() && (name[0] == 's' || name[0] == 'e')){
+        monst = new Fighter(15,20,50,4,SCORPION);
+    } else {
+        fprintf(stderr, "Unknown monster '%s', defaulting to rat\n", a);
+        monst = new Fighter(15,10,50,3,RAT);
     }
 
     printf("HP = %f\n",her -> getHP());

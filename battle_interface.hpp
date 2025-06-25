@@ -5,6 +5,8 @@
 #define INTERFACEBAT
 
 #include <math.h>
+#include <cctype>
+#include <string>
 
 #define LIML 0
 #define LIMU 75
@@ -21,7 +23,7 @@ double heroX,heroY,heroZ;
 double monsterX,monsterY,monsterZ;
 
 Fighter* her = new Fighter(15,10,10,5,666);
-Fighter* monst;
+Fighter* monst = nullptr;
 
 
 
@@ -31,16 +33,17 @@ void checkBattleEnd(){
         exit(0);
     }
 
-    if (monst -> getHP() <= 0){
-        if (monst -> getid() == CAT){
+    if (monst && monst->getHP() <= 0){
+        if (monst->getid() == CAT){
             cout << "THE END" << endl;
             exit(0);
         }
 
         resetCamera();
         cout << "HP = " << her -> getHP() << endl;
-
         modo = MAP;
+        delete monst;
+        monst = nullptr;
         return;
     }
 }
@@ -52,25 +55,30 @@ void showEnemy(){
     }
     else glCallList(MOD_RAT);*/
 
-    switch(monst -> getid())
+    if (!monst) return;
+    switch(monst->getid())
     {
-	case CAT: glCallList(MOD_CAT);
-		   break;
-	case RAT: glCallList(MOD_RAT);
-		   break;
-	case SCORPION: glCallList(MOD_SCORPION);
+        case CAT: glCallList(MOD_CAT);
+                   break;
+        case RAT: glCallList(MOD_RAT);
+                   break;
+        case SCORPION: glCallList(MOD_SCORPION);
+                   break;
+        default: break;
     }
 }
 
 
 void moveMonster()
 {
+    if (!monst) return;
+
     int dir = rand() % 4;
     double novox = monsterX;
     double novoz = monsterZ;
     double xalvo = heroX;
     double zalvo = heroZ;
-    double rangeVar = monst -> getRange()*STEP;
+    double rangeVar = monst->getRange()*STEP;
 
     //if (monst -> getid() == CAT) rangeVar = 10*STEP;
 
@@ -131,14 +139,16 @@ void show_battle()
     showHPBar(her -> getHP());
     glPopMatrix();
 
-    glPushMatrix();
-    glTranslatef(monsterX,monsterY,monsterZ);
-    showEnemy();
-    glTranslatef(15,10,15);
-    //if(monst -> getid() == CAT) glTranslatef(0,15,-15);
-    //glScalef(ESCALA_BARRA,ESCALA_BARRA,monst -> getHP()*ESCALA_BARRA);
-    showHPBar(monst -> getHP());
-    glPopMatrix();
+    if (monst){
+        glPushMatrix();
+        glTranslatef(monsterX,monsterY,monsterZ);
+        showEnemy();
+        glTranslatef(15,10,15);
+        //if(monst -> getid() == CAT) glTranslatef(0,15,-15);
+        //glScalef(ESCALA_BARRA,ESCALA_BARRA,monst -> getHP()*ESCALA_BARRA);
+        showHPBar(monst->getHP());
+        glPopMatrix();
+    }
     glutSwapBuffers();
 
     moveMonster();
@@ -146,6 +156,8 @@ void show_battle()
 
 void keyboard_battle(unsigned char tecla,int x,int y)
 {
+
+    if (!monst) return;
 
     double xalvo = monsterX;
     double zalvo = monsterZ;
@@ -193,13 +205,15 @@ void arrows_battle(int seta,int x,int y)
 {
     x = y;
 
+    if (!monst) return;
+
     double xalvo = monsterX;
     double zalvo = monsterZ;
     double novox = heroX;
     double novoz = heroZ;
     double rangeVar = STEP;
 
-    if (monst -> getid() == CAT) rangeVar = 3*STEP;
+    if (monst->getid() == CAT) rangeVar = 3*STEP;
 
     if (!(TESTEX && TESTEZ))
     {
