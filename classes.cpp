@@ -120,7 +120,7 @@ Body::Body(string s)
 }
 
 
-vector<Ellipsoid> Body::getbolas()
+const vector<Ellipsoid>& Body::getbolas() const
 {
     return bolas;
 }
