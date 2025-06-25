@@ -1,4 +1,4 @@
-#include "mapa.hpp"
+#include "map_logic.hpp"
 
 #ifndef INTERFACEMAP
 #define INTERFACEMAP
@@ -19,7 +19,7 @@ inline void drawCell(const string& s){
         glCallList(modmonst);
         break;
     case 'h':
-        glCallList(MODHEROI);
+        glCallList(MOD_HERO);
     }
     glPopMatrix();
     glTranslatef(DIMCASA,0,0);
@@ -44,22 +44,22 @@ inline void showMap(){
             glTranslatef(-(1-gameMap[cont1][cont2].interpolacao)*DIMCASA,0,0);
             switch(gameMap[cont1][cont2].rotulo){
             case TELEPORT:
-            case VAZIO:
+            case EMPTY:
                 drawCell(" ");
                 break;
-            case BLOCO:
+            case BLOCK:
                 drawCell(".");
                 break;
-            case MONSTRO:
+            case MONSTER:
                 interpolar(cont1,cont2);
                 switch(gameMap[cont1][cont2].conteudo[0]){
-                    case 'r': modmonst = MODRAT; break;
-                    case 'g': modmonst = MODCAT; break;
-                    case 'e': modmonst = MODSCORPION; break;
+                    case 'r': modmonst = MOD_RAT; break;
+                    case 'g': modmonst = MOD_CAT; break;
+                    case 'e': modmonst = MOD_SCORPION; break;
                 }
                 drawCell("*");
                 break;
-            case HEROI:
+            case HERO:
                 interpolar(cont1,cont2);
                 drawCell("h");
             }
@@ -97,17 +97,17 @@ inline void teclado_map(unsigned char tecla,int x,int y){
     case 'z': alfax--; break;
     case 'x': alfay--; break;
     case 'c': alfaz--; break;
-    case 'r': reseta();
+    case 'r': resetCamera();
     }
 }
 
 inline void setas_map(int seta,int x,int y){
     x = y;
     switch (seta){
-    case GLUT_KEY_UP:    avaliamov(lhero,chero,CIMA); break;
-    case GLUT_KEY_DOWN:  avaliamov(lhero,chero,BAIXO); break;
-    case GLUT_KEY_LEFT:  avaliamov(lhero,chero,ESQ); break;
-    case GLUT_KEY_RIGHT: avaliamov(lhero,chero,DIR); break;
+    case GLUT_KEY_UP:    avaliamov(lhero,chero,UP); break;
+    case GLUT_KEY_DOWN:  avaliamov(lhero,chero,DOWN); break;
+    case GLUT_KEY_LEFT:  avaliamov(lhero,chero,LEFT); break;
+    case GLUT_KEY_RIGHT: avaliamov(lhero,chero,RIGHT); break;
     }
 }
 

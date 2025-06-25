@@ -3,8 +3,8 @@
 #include <time.h>
 #include <math.h>
 
-#include "interfacebat.hpp"
-#include "interfacemap.hpp"
+#include "battle_interface.hpp"
+#include "map_interface.hpp"
 
 #define FPS 60
 
@@ -29,10 +29,10 @@ void display()
     {
         switch (modo)
         {
-        case MAPA:
+        case MAP:
             show_map();
             break;
-        case BATALHA:
+        case BATTLE:
             show_battle();
         }
     }
@@ -49,10 +49,10 @@ void display()
 void keyboard(unsigned char tecla,int x,int y){
     switch (modo)
     {
-    case MAPA:
+    case MAP:
         teclado_map(tecla,x,y);
         break;
-    case BATALHA:
+    case BATTLE:
         keyboard_battle(tecla,x,y);
     }
 }
@@ -61,10 +61,10 @@ void arrows(int seta,int x,int y)
 {
     switch (modo)
     {
-    case MAPA:
+    case MAP:
         setas_map(seta,x,y);
         break;
-    case BATALHA:
+    case BATTLE:
         arrows_battle(seta,x,y);
     }
 }
@@ -73,10 +73,10 @@ void mouse(int bot,int est,int x,int y)
 {
     switch (modo)
     {
-    case MAPA:
+    case MAP:
         mouse_map(bot,est,x,y);
         break;
-    case BATALHA:
+    case BATTLE:
         mouse_battle(bot,est,x,y);
     }
 }

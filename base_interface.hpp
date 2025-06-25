@@ -9,20 +9,20 @@
 
 #define DISC 50
 
-#define MAPA 0
-#define BATALHA 1
+#define MAP 0
+#define BATTLE 1
 #define MENU 3
 
-#define MODHEROI 1
-#define MODRAT 2
-#define MODCAT 3
-#define MODSCORPION 4
+#define MOD_HERO 1
+#define MOD_RAT 2
+#define MOD_CAT 3
+#define MOD_SCORPION 4
 
-#define FATORGRAMA 2
+#define GRASS_FACTOR 2
 
-#define ESCALA_BARRA 0.1
+#define BAR_SCALE 0.1
 
-#define HP_GRANDE 20
+#define LARGE_HP 20
 
 
 double xobs = 0,yobs = 100,zobs = 0;
@@ -36,9 +36,9 @@ Body* ratBody;
 Body* catBody;
 Body* scorpionBody;
 
-int modo = MAPA;
+int modo = MAP;
 
-void reseta(){
+void resetCamera(){
     alfax = 0;
     alfay = 0;
     alfaz = 0;
@@ -245,16 +245,16 @@ void showBlock( void ){
 
     /*int cont1,cont2;
 
-    for (cont1 = 0;cont1 <= 10; cont1+=FATORGRAMA)
+    for (cont1 = 0;cont1 <= 10; cont1+=GRASS_FACTOR)
     {
         glPushMatrix();
-        for (cont2 = 0;cont2 <= 10; cont2+=FATORGRAMA)
+        for (cont2 = 0;cont2 <= 10; cont2+=GRASS_FACTOR)
         {
-            showGram(FATORGRAMA);
-            glTranslatef(0,0,FATORGRAMA);
+            showGram(GRASS_FACTOR);
+            glTranslatef(0,0,GRASS_FACTOR);
         }
         glPopMatrix();
-        glTranslatef(FATORGRAMA,0,0);
+        glTranslatef(GRASS_FACTOR,0,0);
     }*/
 
     //showTriangle(1);
@@ -266,7 +266,7 @@ void showHPBar(double HP)
 {
     glPushMatrix();
 
-    double status = HP/HP_GRANDE;
+    double status = HP/LARGE_HP;
 
     double comp = 1 - status;
 
@@ -282,7 +282,7 @@ void showHPBar(double HP)
     glMaterialfv(GL_FRONT,GL_SPECULAR,fespecular);
     glMaterialfv(GL_FRONT,GL_SHININESS,fbrilho);
 
-    glScalef(ESCALA_BARRA,ESCALA_BARRA,HP*ESCALA_BARRA);
+    glScalef(BAR_SCALE,BAR_SCALE,HP*BAR_SCALE);
 
     //glColor3f(0.2,0.7,0.2);
     glutSolidCube(10);
@@ -367,8 +367,8 @@ Body* loadModel(string arq)
 {
     string strcorpo;
 
-    //concatDirExt((char*) "modelos/",c_arq,(char*) ".cor",&arq);
-    arq = "modelos/" + arq + ".cor";
+    //concatDirExt((char*) "models/",c_arq,(char*) ".cor",&arq);
+    arq = "models/" + arq + ".cor";
 
     const char* c_arq = arq.c_str();
 
@@ -382,28 +382,28 @@ Body* loadModel(string arq)
 void initializeModels(){
 
     heroBody = loadModel("hero");
-    ratBody = loadModel("rato");
-    catBody = loadModel("gato");
-    scorpionBody = loadModel("escorpiao");
+    ratBody = loadModel("rat");
+    catBody = loadModel("cat");
+    scorpionBody = loadModel("scorpion");
 
     puts("carregou");
 
-    glNewList(MODHEROI,GL_COMPILE);
+    glNewList(MOD_HERO,GL_COMPILE);
     puts("opengl vai fazer lista");
     showHero();
     glEndList();
 
     puts("lista hero\n");
 
-    glNewList(MODRAT,GL_COMPILE);
+    glNewList(MOD_RAT,GL_COMPILE);
     showRat();
     glEndList();
 
-    glNewList(MODCAT,GL_COMPILE);
+    glNewList(MOD_CAT,GL_COMPILE);
     showCat();
     glEndList();
 
-    glNewList(MODSCORPION,GL_COMPILE);
+    glNewList(MOD_SCORPION,GL_COMPILE);
     showBody(scorpionBody);
     glEndList();
 

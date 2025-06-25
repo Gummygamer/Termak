@@ -14,26 +14,26 @@ double aleat(double inf,double sup)
     return inf + ( rand() % QUEBRA_ALEAT ) * ( (sup - inf) / QUEBRA_ALEAT );
 }
 
-Fighter::Fighter(double HP,int atq,int def,int alc,int id/*,Body* modelo */){
+Fighter::Fighter(double HP,int atk,int defenseVal,int rng,int id/*,Body* modelo */){
     this -> HP = HP;
-    this -> ataque = atq;
-    this -> defesa = def;
-    this -> alcance = alc;
+    this -> attack = atk;
+    this -> defense = defenseVal;
+    this -> range = rng;
     this -> id = id;
     //this -> modelo = modelo;
 }
 
-void Fighter::recebedano(Fighter* inimigo){
-    inimigo -> evolui(this);
-    this -> HP -= inimigo -> ataque/this -> defesa*aleat(0,inimigo -> ataque);
+void Fighter::takeDamage(Fighter* inimigo){
+    inimigo -> evolve(this);
+    this -> HP -= inimigo -> attack/this -> defense*aleat(0,inimigo -> attack);
     printf("%d HP = %f\n",id,HP);
     printf("%d HP = %f\n",inimigo -> id,inimigo -> HP);
 }
 
-void Fighter::evolui(Fighter* inimigo){
+void Fighter::evolve(Fighter* inimigo){
     HP += (inimigo -> HP) / 100;
-    ataque += (inimigo -> defesa) / 100;
-    defesa += (inimigo -> ataque) / 100;
+    attack += (inimigo -> defense) / 100;
+    defense += (inimigo -> attack) / 100;
 }
 
 double Fighter::getHP(void){
@@ -44,8 +44,8 @@ int Fighter::getid(void){
     return id;
 }
 
-int Fighter::getalcance(void){
-    return alcance;
+int Fighter::getRange(void){
+    return range;
 }
 
 /*Body* Fighter::getmodelo(void)
