@@ -120,7 +120,10 @@ void show_battle()
     glClearColor(0,0,0,1);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective(80,1,0.05,200);
+    int width = glutGet(GLUT_WINDOW_WIDTH);
+    int height = glutGet(GLUT_WINDOW_HEIGHT);
+    double aspect = width / (double) height;
+    gluPerspective(80,aspect,0.05,200);
     /* top-down camera centered on the battle field */
     gluLookAt(BATTLE_CENTER, BATTLE_CAM_HEIGHT + yobs, BATTLE_CENTER,
               BATTLE_CENTER, 0, BATTLE_CENTER,
