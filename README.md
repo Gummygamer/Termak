@@ -38,6 +38,8 @@ The following controls are taken from `how to use it.txt`:
 4. Arrow keys move the character
 5. When touching an enemy on the field the battle mode begins. Get close and
    press `q` to attack.
+6. Most USB gamepads are supported. The left stick mirrors the arrow keys,
+   button A attacks and button B resets the camera.
 
 Game maps are found in the `maps/` directory and 3D models are in
 `models/`.

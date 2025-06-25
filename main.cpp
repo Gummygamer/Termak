@@ -81,6 +81,21 @@ void mouse(int bot,int est,int x,int y)
     }
 }
 
+void joystick(unsigned int bot, int x, int y, int z)
+{
+    /* simple threshold based mapping for analog sticks */
+    const int thr = 200;
+    if (x > thr) arrows(GLUT_KEY_RIGHT, 0, 0);
+    if (x < -thr) arrows(GLUT_KEY_LEFT, 0, 0);
+    if (y > thr) arrows(GLUT_KEY_UP, 0, 0);
+    if (y < -thr) arrows(GLUT_KEY_DOWN, 0, 0);
+
+    if (bot & GLUT_JOYSTICK_BUTTON_A)
+        keyboard('q', 0, 0);
+    if (bot & GLUT_JOYSTICK_BUTTON_B)
+        keyboard('r', 0, 0);
+}
+
 void initGlut(int* a,char** b)
 {
     glutInit(a,b);
@@ -95,6 +110,7 @@ void initGlut(int* a,char** b)
     glutKeyboardFunc(keyboard);
     glutMouseFunc(mouse);
     glutSpecialFunc(arrows);
+    glutJoystickFunc(joystick, 50);
     glutIdleFunc(display);
 }
 
