@@ -1,16 +1,16 @@
 typedef struct
 {
     double red,green,blue;
-}Cor;
+}Color;
 
 typedef struct
 {
     float x,y,z,sx,sy,sz,rx,ry,rz;
 
-    Cor ambiente,difusa,especular;
+    Color ambiente,difusa,especular;
 
     double brilho;
 
     double raio;
 
-}Elipzoide;
+}Ellipsoid;

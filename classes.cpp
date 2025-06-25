@@ -4,7 +4,7 @@
 #define QUEBRA_ALEAT 1000
 
 
-void Corpo::testaCorpo() {
+void Body::testaBody() {
     /* if(this->bolas[0]->getraio());
     if(this->tamanho); */
 }
@@ -14,52 +14,52 @@ double aleat(double inf,double sup)
     return inf + ( rand() % QUEBRA_ALEAT ) * ( (sup - inf) / QUEBRA_ALEAT );
 }
 
-Lutador::Lutador(double HP,int atq,int def,int alc,int id/*,Corpo* modelo */){
+Fighter::Fighter(double HP,int atk,int defenseVal,int rng,int id/*,Body* modelo */){
     this -> HP = HP;
-    this -> ataque = atq;
-    this -> defesa = def;
-    this -> alcance = alc;
+    this -> attack = atk;
+    this -> defense = defenseVal;
+    this -> range = rng;
     this -> id = id;
     //this -> modelo = modelo;
 }
 
-void Lutador::recebedano(Lutador* inimigo){
-    inimigo -> evolui(this);
-    this -> HP -= inimigo -> ataque/this -> defesa*aleat(0,inimigo -> ataque);
+void Fighter::takeDamage(Fighter* inimigo){
+    inimigo -> evolve(this);
+    this -> HP -= inimigo -> attack/this -> defense*aleat(0,inimigo -> attack);
     printf("%d HP = %f\n",id,HP);
     printf("%d HP = %f\n",inimigo -> id,inimigo -> HP);
 }
 
-void Lutador::evolui(Lutador* inimigo){
+void Fighter::evolve(Fighter* inimigo){
     HP += (inimigo -> HP) / 100;
-    ataque += (inimigo -> defesa) / 100;
-    defesa += (inimigo -> ataque) / 100;
+    attack += (inimigo -> defense) / 100;
+    defense += (inimigo -> attack) / 100;
 }
 
-double Lutador::getHP(void){
+double Fighter::getHP(void){
     return HP;
 }
 
-int Lutador::getid(void){
+int Fighter::getid(void){
     return id;
 }
 
-int Lutador::getalcance(void){
-    return alcance;
+int Fighter::getRange(void){
+    return range;
 }
 
-/*Corpo* Lutador::getmodelo(void)
+/*Body* Fighter::getmodelo(void)
 {
 	return modelo;
 } */
 
-/* SetofLutadores::SetofLutadores(Lutador** lutadores,int tam){
+/* SetofFighteres::SetofFighteres(Fighter** lutadores,int tam){
 	this -> tamanho = tam;
 	this -> lutadores = lutadores;
 	atual = 0;
 }
 
-Lutador* SetofLutadores::getprox(void){
+Fighter* SetofFighteres::getprox(void){
 	if(atual == tamanho){
 		atual = 0;
 		return 0;
@@ -70,7 +70,7 @@ Lutador* SetofLutadores::getprox(void){
 } */
 
 
-Corpo::Corpo(vector<Elipzoide> bolas,int tam)
+Body::Body(vector<Ellipsoid> bolas,int tam)
 {
     //puts("bolas\n");
     this -> bolas = bolas;
@@ -78,7 +78,7 @@ Corpo::Corpo(vector<Elipzoide> bolas,int tam)
     //puts("const corp\n");
 }
 
-Corpo::Corpo(string s)
+Body::Body(string s)
 {
     //char* strcorpo;
     //char* strtam;
@@ -87,18 +87,18 @@ Corpo::Corpo(string s)
 
     //cout << s << endl;
 
-    //colocaextedir("modelos/",arq,".cor",&arq);
-    //carregaarquivo(arq,&strcorpo);
+    //concatDirExt("modelos/",arq,".cor",&arq);
+    //loadFile(arq,&strcorpo);
 
     //strtam = strtok(s,"\n");
 
-    //tam = paraint(strtam);
+    //tam = stringToInt(strtam);
 
-    vector<Elipzoide> elipz;
+    vector<Ellipsoid> elipz;
 
     vector<string> str = explode(s,'\n');
 
-    tam = paraint(str[0]);
+    tam = stringToInt(str[0]);
 
     cout << "tam =" << tam << endl;
 
@@ -114,37 +114,37 @@ Corpo::Corpo(string s)
 
     puts("elips ok\n");
 
-    //Corpo(elip,tam);
+    //Body(elip,tam);
     this->bolas = elipz;
     this->tamanho = tam;
 }
 
 
-vector<Elipzoide> Corpo::getbolas()
+vector<Ellipsoid> Body::getbolas()
 {
     return bolas;
 }
 
-int Corpo::gettamanho(){
+int Body::gettamanho(){
     return bolas.size();
 }
 
-Cor Corpo::cor(string s)
+Color Body::cor(string s)
 {
-    Cor ret;
+    Color ret;
 
     vector<string> v = explode(s,',');
 
-    ret.red = ((double) paraint(v[0].c_str()))/100;
-    ret.green = ((double) paraint(v[1].c_str()))/100;
-    ret.blue = ((double) paraint(v[2].c_str()))/100;
+    ret.red = ((double) stringToInt(v[0].c_str()))/100;
+    ret.green = ((double) stringToInt(v[1].c_str()))/100;
+    ret.blue = ((double) stringToInt(v[2].c_str()))/100;
 
     return ret;
 }
 
-Elipzoide Corpo::elip(string s)
+Ellipsoid Body::elip(string s)
 {
-    Elipzoide ret;
+    Ellipsoid ret;
 
     puts("comec elip");
 
@@ -160,28 +160,28 @@ Elipzoide Corpo::elip(string s)
 
     puts("explodiu");
 
-    ret.x = (float) paraint(pos[0]);
-    ret.y = (float) paraint(pos[1]);
+    ret.x = (float) stringToInt(pos[0]);
+    ret.y = (float) stringToInt(pos[1]);
 
     //puts(s.c_str());
 
-    ret.z = (float) paraint(pos[2]);
+    ret.z = (float) stringToInt(pos[2]);
 
     puts("pos");
 
     vector<string> sc = explode(v[1],',');
 
-    ret.sx = (float) paraint(sc[0]);
-    ret.sy = (float) paraint(sc[1]);
-    ret.sz = (float) paraint(sc[2]);
+    ret.sx = (float) stringToInt(sc[0]);
+    ret.sy = (float) stringToInt(sc[1]);
+    ret.sz = (float) stringToInt(sc[2]);
 
     puts("sc");
 
     vector<string> rot = explode(v[2],',');
 
-    ret.rx = (float) paraint(rot[0]);
-    ret.ry = (float) paraint(rot[1]);
-    ret.rz = (float) paraint(rot[2]);
+    ret.rx = (float) stringToInt(rot[0]);
+    ret.ry = (float) stringToInt(rot[1]);
+    ret.rz = (float) stringToInt(rot[2]);
 
     puts("rx");
 
@@ -193,11 +193,11 @@ Elipzoide Corpo::elip(string s)
 
     ret.especular = cor(mat[2]);
 
-    ret.brilho = ((double) paraint(mat[3]))/100;
+    ret.brilho = ((double) stringToInt(mat[3]))/100;
 
     puts("mat");
 
-    ret.raio = (double) paraint(v[4]);
+    ret.raio = (double) stringToInt(v[4]);
 
     return ret;
 }

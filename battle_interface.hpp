@@ -1,4 +1,4 @@
-#include "baseinterface.hpp"
+#include "base_interface.hpp"
 
 #ifndef INTERFACEBAT
 
@@ -8,103 +8,103 @@
 
 #define LIML 0
 #define LIMU 75
-#define PASSO 3
-#define TESTEX (fabs(xalvo - novox) <= alcance)
-#define TESTEZ (fabs(zalvo - novoz) <= alcance)
+#define STEP 3
+#define TESTEX (fabs(xalvo - novox) <= rangeVar)
+#define TESTEZ (fabs(zalvo - novoz) <= rangeVar)
 #define TESTELIM ((novox >= LIML) && (novox <= LIMU) && (novoz >= LIML) && (novoz <= LIMU))
 
-#define RATO 1
-#define GATO 2
-#define ESCORPIAO 3
+#define RAT 1
+#define CAT 2
+#define SCORPION 3
 
-double xheroi,yheroi,zheroi;
-double xmonstro,ymonstro,zmonstro;
+double heroX,heroY,heroZ;
+double monsterX,monsterY,monsterZ;
 
-Lutador* her = new Lutador(15,10,10,5,666);
-Lutador* monst;
+Fighter* her = new Fighter(15,10,10,5,666);
+Fighter* monst;
 
 
 
-void testefimdebat(){
+void checkBattleEnd(){
     if (her -> getHP() <= 0){
         cout << "GAME OVER" << endl;
         exit(0);
     }
 
     if (monst -> getHP() <= 0){
-        if (monst -> getid() == GATO){
+        if (monst -> getid() == CAT){
             cout << "THE END" << endl;
             exit(0);
         }
 
-        reseta();
+        resetCamera();
         cout << "HP = " << her -> getHP() << endl;
 
-        modo = MAPA;
+        modo = MAP;
         return;
     }
 }
 
-void mostrainimigo(){
-    /*if (monst -> getid() == GATO){
+void showEnemy(){
+    /*if (monst -> getid() == CAT){
         //glTranslatef(0,9.9,0);
-        glCallList(MODGATO);
+        glCallList(MOD_CAT);
     }
-    else glCallList(MODRATO);*/
+    else glCallList(MOD_RAT);*/
 
     switch(monst -> getid())
     {
-	case GATO: glCallList(MODGATO);
+	case CAT: glCallList(MOD_CAT);
 		   break;
-	case RATO: glCallList(MODRATO);
+	case RAT: glCallList(MOD_RAT);
 		   break;
-	case ESCORPIAO: glCallList(MODESCORPIAO);
+	case SCORPION: glCallList(MOD_SCORPION);
     }
 }
 
 
-void movemonstro()
+void moveMonster()
 {
     int dir = rand() % 4;
-    double novox = xmonstro;
-    double novoz = zmonstro;
-    double xalvo = xheroi;
-    double zalvo = zheroi;
-    double alcance = monst -> getalcance()*PASSO;
+    double novox = monsterX;
+    double novoz = monsterZ;
+    double xalvo = heroX;
+    double zalvo = heroZ;
+    double rangeVar = monst -> getRange()*STEP;
 
-    //if (monst -> getid() == GATO) alcance = 10*PASSO;
+    //if (monst -> getid() == CAT) rangeVar = 10*STEP;
 
     switch (dir)
     {
     case 0:
-        novox += PASSO;
+        novox += STEP;
         break;
     case 1:
-        novox -= PASSO;
+        novox -= STEP;
         break;
     case 2:
-        novoz += PASSO;
+        novoz += STEP;
         break;
     case 3:
-        novoz -= PASSO;
+        novoz -= STEP;
     }
 
     if (TESTEX && TESTEZ)
     {
-        her -> recebedano(monst);
-        testefimdebat();
+        her -> takeDamage(monst);
+        checkBattleEnd();
     }
     else
     {
         if (TESTELIM)
         {
-            xmonstro = novox;
-            zmonstro = novoz;
+            monsterX = novox;
+            monsterZ = novoz;
         }
     }
 }
 
-void mostra_bat()
+void show_battle()
 {
 
     glClearColor(0,0,0,1);
@@ -118,48 +118,48 @@ void mostra_bat()
     glRotatef(alfay,0,1,0);
     glRotatef(alfaz,0,0,1);
 
-    mostraplano();
+    showPlane();
 
     glPushMatrix();
-    glTranslatef(xheroi,yheroi,zheroi);
-    glCallList(MODHEROI);
+    glTranslatef(heroX,heroY,heroZ);
+    glCallList(MOD_HERO);
     glTranslatef(15,10,15);
     //glScalef(ESCALA_BARRA,ESCALA_BARRA,her -> getHP()*ESCALA_BARRA);
-    mostrabarraHP(her -> getHP());
+    showHPBar(her -> getHP());
     glPopMatrix();
 
     glPushMatrix();
-    glTranslatef(xmonstro,ymonstro,zmonstro);
-    mostrainimigo();
+    glTranslatef(monsterX,monsterY,monsterZ);
+    showEnemy();
     glTranslatef(15,10,15);
-    //if(monst -> getid() == GATO) glTranslatef(0,15,-15);
+    //if(monst -> getid() == CAT) glTranslatef(0,15,-15);
     //glScalef(ESCALA_BARRA,ESCALA_BARRA,monst -> getHP()*ESCALA_BARRA);
-    mostrabarraHP(monst -> getHP());
+    showHPBar(monst -> getHP());
     glPopMatrix();
     glutSwapBuffers();
 
-    movemonstro();
+    moveMonster();
 }
 
-void teclado_bat(unsigned char tecla,int x,int y)
+void keyboard_battle(unsigned char tecla,int x,int y)
 {
 
-    double xalvo = xmonstro;
-    double zalvo = zmonstro;
-    double novox = xheroi;
-    double novoz = zheroi;
-    double alcance = 2*monst->getalcance()*PASSO;
+    double xalvo = monsterX;
+    double zalvo = monsterZ;
+    double novox = heroX;
+    double novoz = heroZ;
+    double rangeVar = 2*monst->getRange()*STEP;
 
     x=y;
 
-    //if (monst -> getid() == GATO) alcance = 15*PASSO;
+    //if (monst -> getid() == CAT) rangeVar = 15*STEP;
 
     switch (tecla){
     case 'q':
         if (TESTEX && TESTEZ)
         {
-            monst -> recebedano(her);
-            testefimdebat();
+            monst -> takeDamage(her);
+            checkBattleEnd();
         }
         break;
     case 'a':
@@ -181,42 +181,42 @@ void teclado_bat(unsigned char tecla,int x,int y)
         alfaz--;
         break;
     case 'r':
-        reseta();
+        resetCamera();
     }
 }
 
-void setas_bat(int seta,int x,int y)
+void arrows_battle(int seta,int x,int y)
 {
     x = y;
 
-    double xalvo = xmonstro;
-    double zalvo = zmonstro;
-    double novox = xheroi;
-    double novoz = zheroi;
-    double alcance = PASSO;
+    double xalvo = monsterX;
+    double zalvo = monsterZ;
+    double novox = heroX;
+    double novoz = heroZ;
+    double rangeVar = STEP;
 
-    if (monst -> getid() == GATO) alcance = 3*PASSO;
+    if (monst -> getid() == CAT) rangeVar = 3*STEP;
 
     if (!(TESTEX && TESTEZ))
     {
         switch (seta)
         {
         case GLUT_KEY_UP:
-            xheroi += PASSO;
+            heroX += STEP;
             break;
         case GLUT_KEY_DOWN:
-            xheroi -= PASSO;
+            heroX -= STEP;
             break;
         case GLUT_KEY_RIGHT:
-            zheroi += PASSO;
+            heroZ += STEP;
             break;
         case GLUT_KEY_LEFT:
-            zheroi -= PASSO;
+            heroZ -= STEP;
         }
     }
 }
 
-void mouse_bat(int bot,int est,int x,int y)
+void mouse_battle(int bot,int est,int x,int y)
 {
     est = x = y;
 

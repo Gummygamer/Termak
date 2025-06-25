@@ -9,20 +9,20 @@
 
 #define DISC 50
 
-#define MAPA 0
-#define BATALHA 1
+#define MAP 0
+#define BATTLE 1
 #define MENU 3
 
-#define MODHEROI 1
-#define MODRATO 2
-#define MODGATO 3
-#define MODESCORPIAO 4
+#define MOD_HERO 1
+#define MOD_RAT 2
+#define MOD_CAT 3
+#define MOD_SCORPION 4
 
-#define FATORGRAMA 2
+#define GRASS_FACTOR 2
 
-#define ESCALA_BARRA 0.1
+#define BAR_SCALE 0.1
 
-#define HP_GRANDE 20
+#define LARGE_HP 20
 
 
 double xobs = 0,yobs = 100,zobs = 0;
@@ -31,14 +31,14 @@ double alfax = 0;
 double alfay = 0;
 double alfaz = 0;
 
-Corpo* corpoheroi;
-Corpo* corporato;
-Corpo* corpogato;
-Corpo* corpoescorpiao;
+Body* heroBody;
+Body* ratBody;
+Body* catBody;
+Body* scorpionBody;
 
-int modo = MAPA;
+int modo = MAP;
 
-void reseta(){
+void resetCamera(){
     alfax = 0;
     alfay = 0;
     alfaz = 0;
@@ -71,7 +71,7 @@ void iluminacao(){
     glEnable(GL_LIGHT0);
 }
 
-void mostratriang( double k ){
+void showTriangle( double k ){
     glBegin(GL_TRIANGLES);
     glNormal3f(0,0,1);
     glVertex2f(-k,-k);
@@ -80,7 +80,7 @@ void mostratriang( double k ){
     glEnd();
 }
 
-void mostragrama( double k ){
+void showGram( double k ){
     glBegin(GL_TRIANGLES);
     glNormal3f(0,0,1);
     glVertex2f(-k,-k);
@@ -104,7 +104,7 @@ void pontoesfera(double raio,double alfa,double beta){
     glVertex3fv(v);
 }
 
-void mostraesfera(double raio,double div)
+void showSphere(double raio,double div)
 {
     double alfa,beta,delta;
     delta = 2*PI/div;
@@ -137,15 +137,15 @@ void mostraesfera(double raio,double div)
     glEnd();
 }
 
-void mostraelipzoide(Elipzoide e)
+void showEllipsoid(Ellipsoid e)
 {
-    puts("vai mostrarelip");
+    puts("displayEllipsoid");
 
-    Cor difusa = e.difusa;
-    Cor ambiente = e.ambiente;
-    Cor especular = e.especular;
+    Color difusa = e.difusa;
+    Color ambiente = e.ambiente;
+    Color especular = e.especular;
 
-    puts("pegou cores");
+    puts("got colors");
 
     float fdifusa[4] = {(float)difusa.red, (float)difusa.green, (float)difusa.blue, 1.0f};
     float fambiente[4] = {(float) ambiente.red,(float) ambiente.green,(float) ambiente.blue,1};
@@ -157,7 +157,7 @@ void mostraelipzoide(Elipzoide e)
     glMaterialfv(GL_FRONT,GL_SPECULAR,fespecular);
     glMaterialfv(GL_FRONT,GL_SHININESS,fbrilho);
 
-    puts("opengl inicializou material");
+    puts("OpenGL material initialized");
 
     //Ponto* centro = e->getcentro();
 
@@ -178,33 +178,33 @@ void mostraelipzoide(Elipzoide e)
 
     glScalef(e.sx,e.sy,e.sz);
 
-    mostraesfera(e.raio,DISC);
+    showSphere(e.raio,DISC);
 
     glPopMatrix();
 }
 
-void mostracorpo(Corpo* c)
+void showBody(Body* c)
 {
     int cont;
     //int tam = c->gettamanho();
-    //vector<Elipzoide> vetor = c->getbolas();
+    //vector<Ellipsoid> vetor = c->getbolas();
 
-    puts("pegou vetor");
+    puts("got vector");
 
     //printf("%d\n",vetor);
 
-    //Elipzoide primeiro = vetor[0];
+    //Ellipsoid primeiro = vetor[0];
 
-    puts("teste");
+    puts("test");
 
     for (cont = 0;cont < c->gettamanho()/*tam*/;cont++)
     {
-        puts("vai chamar mostraelizoide");
-        mostraelipzoide(c->getbolas().at(cont));
+        puts("calling displayEllipsoid");
+        showEllipsoid(c->getbolas().at(cont));
     }
 }
 
-void mostraplano( void ){
+void showPlane( void ){
     glPushMatrix();
     glScalef(1,0.0001,1);
 
@@ -224,7 +224,7 @@ void mostraplano( void ){
     glPopMatrix();
 }
 
-void mostrabloco( void ){
+void showBlock( void ){
     glPushMatrix();
     float fdifusa[4] = {0.2,0.7,0.2,1};
     float fambiente[4] = {0.2,0.7,0.2,1};
@@ -245,28 +245,28 @@ void mostrabloco( void ){
 
     /*int cont1,cont2;
 
-    for (cont1 = 0;cont1 <= 10; cont1+=FATORGRAMA)
+    for (cont1 = 0;cont1 <= 10; cont1+=GRASS_FACTOR)
     {
         glPushMatrix();
-        for (cont2 = 0;cont2 <= 10; cont2+=FATORGRAMA)
+        for (cont2 = 0;cont2 <= 10; cont2+=GRASS_FACTOR)
         {
-            mostragrama(FATORGRAMA);
-            glTranslatef(0,0,FATORGRAMA);
+            showGram(GRASS_FACTOR);
+            glTranslatef(0,0,GRASS_FACTOR);
         }
         glPopMatrix();
-        glTranslatef(FATORGRAMA,0,0);
+        glTranslatef(GRASS_FACTOR,0,0);
     }*/
 
-    //mostratriang(1);
+    //showTriangle(1);
 
     glPopMatrix();
 }
 
-void mostrabarraHP(double HP)
+void showHPBar(double HP)
 {
     glPushMatrix();
 
-    double status = HP/HP_GRANDE;
+    double status = HP/LARGE_HP;
 
     double comp = 1 - status;
 
@@ -282,7 +282,7 @@ void mostrabarraHP(double HP)
     glMaterialfv(GL_FRONT,GL_SPECULAR,fespecular);
     glMaterialfv(GL_FRONT,GL_SHININESS,fbrilho);
 
-    glScalef(ESCALA_BARRA,ESCALA_BARRA,HP*ESCALA_BARRA);
+    glScalef(BAR_SCALE,BAR_SCALE,HP*BAR_SCALE);
 
     //glColor3f(0.2,0.7,0.2);
     glutSolidCube(10);
@@ -290,121 +290,121 @@ void mostrabarraHP(double HP)
     glPopMatrix();
 }
 
-/*void mostralutador(Lutador* l)
+/*void mostralutador(Fighter* l)
 {
-	mostracorpo(l->getmodelo());
+	showBody(l->getmodelo());
 }*/
 
-void mostraheroi( void ){
+void showHero( void ){
     /* glPushMatrix();
     glColor3f(0,0,1);
     glScalef(0.74,0.74,0.74);
-    mostraesfera(7,DISC);
+    showSphere(7,DISC);
     glTranslatef(0,7,0);
     glColor3f(1,1,0);
-    mostraesfera(5,DISC);
+    showSphere(5,DISC);
     glColor3f(0,0,0);
     glTranslatef(4.5,1,-1);
-    mostraesfera(1,DISC);
+    showSphere(1,DISC);
     glTranslatef(0,0,2);
-    mostraesfera(1,DISC);
+    showSphere(1,DISC);
     glPopMatrix(); */
-    corpoheroi->testaCorpo();
-    mostracorpo(corpoheroi);
+    heroBody->testaBody();
+    showBody(heroBody);
 }
 
-void mostrarato( void ){
+void showRat( void ){
     /*glPushMatrix();
     glColor3f(1,1,1);
     glScalef(0.74,0.74,0.74);
-    mostraesfera(5,DISC);
+    showSphere(5,DISC);
     glTranslatef(5,0,0);
     glColor3f(0,0,0);
-    mostraesfera(1,DISC);
+    showSphere(1,DISC);
     glTranslatef(-0.2,1,-1);
     glColor3f(1,0,0);
-    mostraesfera(1,DISC);
+    showSphere(1,DISC);
     glTranslatef(0,0,2);
-    mostraesfera(1,DISC);
+    showSphere(1,DISC);
     glColor3f(1,1,0);
     glTranslatef(-10,-1,-1);
     glScalef(2,0.1,0.1);
-    mostraesfera(2,DISC);
+    showSphere(2,DISC);
     glPopMatrix(); */
-    mostracorpo(corporato);
+    showBody(ratBody);
 }
 
-void mostragato( void ){
+void showCat( void ){
     /*glPushMatrix();
     glScalef(4,4,4);
     glColor3f(0,0,1);
-    mostraesfera(5,DISC);
+    showSphere(5,DISC);
     glTranslatef(0,4,-1.1);
     glRotatef(90,0,1,0);
     glRotatef(60,0,0,1);
-    mostratriang(3);
+    showTriangle(3);
     glRotatef(-120,0,0,1);
-    mostratriang(3);
+    showTriangle(3);
     glRotatef(60,0,0,1);
     glRotatef(-90,0,1,0);
     glTranslatef(5,-4,0);
     glColor3f(1,0,0.2);
-    mostraesfera(1,DISC);
+    showSphere(1,DISC);
     glTranslatef(-0.2,1,-1);
     glColor3f(0,1,0);
-    mostraesfera(1,DISC);
+    showSphere(1,DISC);
     glTranslatef(0,0,2);
-    mostraesfera(1,DISC);
+    showSphere(1,DISC);
     glColor3f(0,0,1);
     glTranslatef(-10,-1,-1);
     glScalef(2,0.1,0.1);
-    mostraesfera(2,DISC);
+    showSphere(2,DISC);
     glPopMatrix();*/
-    mostracorpo(corpogato);
+    showBody(catBody);
 }
 
-Corpo* carregamodelo(string arq)
+Body* loadModel(string arq)
 {
     string strcorpo;
 
-    //colocaextedir((char*) "modelos/",c_arq,(char*) ".cor",&arq);
-    arq = "modelos/" + arq + ".cor";
+    //concatDirExt((char*) "models/",c_arq,(char*) ".cor",&arq);
+    arq = "models/" + arq + ".cor";
 
     const char* c_arq = arq.c_str();
 
-    strcorpo = string(carregaarquivo(c_arq));
+    strcorpo = string(loadFile(c_arq));
 
     printf("arq ok!\n");
 
-    return new Corpo(strcorpo);
+    return new Body(strcorpo);
 }
 
-void inicializacoesdemodelos(){
+void initializeModels(){
 
-    corpoheroi = carregamodelo("heroi");
-    corporato = carregamodelo("rato");
-    corpogato = carregamodelo("gato");
-    corpoescorpiao = carregamodelo("escorpiao");
+    heroBody = loadModel("hero");
+    ratBody = loadModel("rat");
+    catBody = loadModel("cat");
+    scorpionBody = loadModel("scorpion");
 
     puts("carregou");
 
-    glNewList(MODHEROI,GL_COMPILE);
+    glNewList(MOD_HERO,GL_COMPILE);
     puts("opengl vai fazer lista");
-    mostraheroi();
+    showHero();
     glEndList();
 
     puts("lista hero\n");
 
-    glNewList(MODRATO,GL_COMPILE);
-    mostrarato();
+    glNewList(MOD_RAT,GL_COMPILE);
+    showRat();
     glEndList();
 
-    glNewList(MODGATO,GL_COMPILE);
-    mostragato();
+    glNewList(MOD_CAT,GL_COMPILE);
+    showCat();
     glEndList();
 
-    glNewList(MODESCORPIAO,GL_COMPILE);
-    mostracorpo(corpoescorpiao);
+    glNewList(MOD_SCORPION,GL_COMPILE);
+    showBody(scorpionBody);
     glEndList();
 
 }

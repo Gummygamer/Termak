@@ -1,4 +1,4 @@
-#include "auxiliares.hpp"
+#include "helpers.hpp"
 
 
 vector<string> explode(string s,char c)
@@ -20,7 +20,7 @@ vector<string> explode(string s,char c)
 }
 
 // fun��o que lembra a pr�pria strcat
-void colocaextedir(char* dir,char* arq,char* ext,char** alvo){
+void concatDirExt(char* dir,char* arq,char* ext,char** alvo){
     *alvo = (char*) malloc((strlen(dir)+strlen(arq)+strlen(ext) + 1)*sizeof(char));
     printf("aloca��o ext ok\n");
     sprintf(*alvo, "%s%s%s", dir, arq, ext);
@@ -30,18 +30,16 @@ void colocaextedir(char* dir,char* arq,char* ext,char** alvo){
 
 /* fun��o que carrega o arquivo de nome arq e coloca seu conte�do em *alvo retornando seu
 tamanho */
-char* carregaarquivo(const char* arq){
-    int cont=0;
+char* loadFile(const char* arq){
+    int cont = 0;
 
-    /*while(arq[cont]!='.'){
-    	cont++;
-    }*/
+    printf("%s\n", arq);
 
-    //arq[cont+3] = '\0';
-
-    printf("%s\n",arq);
-
-    FILE* arqu = fopen(arq,"r");
+    FILE* arqu = fopen(arq, "r");
+    if (!arqu) {
+        fprintf(stderr, "Failed to open %s\n", arq);
+        return NULL;
+    }
 
     printf("fopen ok\n");
 
@@ -49,38 +47,33 @@ char* carregaarquivo(const char* arq){
 
     printf("buffer aloc\n");
 
-    char atual;
-
-    while ((atual=fgetc(arqu))!=EOF)
-    {
-        buffer[cont] = atual;
-        cont++;
+    int c;
+    while ((c = fgetc(arqu)) != EOF && cont < LIM - 1) {
+        buffer[cont++] = (char)c;
     }
 
     buffer[cont] = '\0';
 
-    puts(buffer);
-
-    int tam = strlen(buffer);
-
-    char* ret = (char*) malloc(tam*sizeof(char));
-
-    strcpy(ret,buffer);
-
     fclose(arqu);
 
-    puts(ret);
+    char* ret = (char*) malloc((cont + 1) * sizeof(char));
+    if (!ret) {
+        fprintf(stderr, "Memory allocation error\n");
+        return NULL;
+    }
+
+    strcpy(ret, buffer);
 
     return ret;
 }
 
-void escreveemarquivo(char* arq,char* conteudo)
+void writeToFile(char* arq,char* conteudo)
 {
     FILE* arqu = fopen(arq,"w");
     fprintf(arqu, "%s", conteudo);
 }
 /* fun��o que converte uma string para int,em caso de char inv�lido retorna -1 */
-int paraint(string s)
+int stringToInt(string s)
 {
     istringstream stream(s);
     int ret;
