@@ -183,7 +183,7 @@ bool isEmpty(int a,int b){
 }
 
 void battle(char* a){
-    reseta();
+    resetCamera();
 
     /*if (a[0] == 'g'){
         monst = new Fighter(100,10,50,CAT);
