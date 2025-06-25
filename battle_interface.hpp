@@ -122,7 +122,8 @@ void show_battle()
 
     glPushMatrix();
     glTranslatef(heroX,heroY,heroZ);
-    glCallList(MOD_HERO);
+    if (!firstPerson)
+        glCallList(MOD_HERO);
     glTranslatef(15,10,15);
     //glScalef(ESCALA_BARRA,ESCALA_BARRA,her -> getHP()*ESCALA_BARRA);
     showHPBar(her -> getHP());
@@ -182,6 +183,10 @@ void keyboard_battle(unsigned char tecla,int x,int y)
         break;
     case 'r':
         resetCamera();
+        break;
+    case 'p':
+        toggleFirstPerson();
+        break;
     }
 }
 
