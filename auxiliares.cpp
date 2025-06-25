@@ -31,17 +31,15 @@ void concatDirExt(char* dir,char* arq,char* ext,char** alvo){
 /* fun��o que carrega o arquivo de nome arq e coloca seu conte�do em *alvo retornando seu
 tamanho */
 char* loadFile(const char* arq){
-    int cont=0;
+    int cont = 0;
 
-    /*while(arq[cont]!='.'){
-    	cont++;
-    }*/
+    printf("%s\n", arq);
 
-    //arq[cont+3] = '\0';
-
-    printf("%s\n",arq);
-
-    FILE* arqu = fopen(arq,"r");
+    FILE* arqu = fopen(arq, "r");
+    if (!arqu) {
+        fprintf(stderr, "Failed to open %s\n", arq);
+        return NULL;
+    }
 
     printf("fopen ok\n");
 
@@ -49,27 +47,22 @@ char* loadFile(const char* arq){
 
     printf("buffer aloc\n");
 
-    char atual;
-
-    while ((atual=fgetc(arqu))!=EOF)
-    {
-        buffer[cont] = atual;
-        cont++;
+    int c;
+    while ((c = fgetc(arqu)) != EOF && cont < LIM - 1) {
+        buffer[cont++] = (char)c;
     }
 
     buffer[cont] = '\0';
 
-    puts(buffer);
-
-    int tam = strlen(buffer);
-
-    char* ret = (char*) malloc(tam*sizeof(char));
-
-    strcpy(ret,buffer);
-
     fclose(arqu);
 
-    puts(ret);
+    char* ret = (char*) malloc((cont + 1) * sizeof(char));
+    if (!ret) {
+        fprintf(stderr, "Memory allocation error\n");
+        return NULL;
+    }
+
+    strcpy(ret, buffer);
 
     return ret;
 }
