@@ -25,7 +25,7 @@
 #define LARGE_HP 20
 
 
-double xobs = 0,yobs = 100,zobs = 0;
+double xobs = 0,yobs = 10,zobs = 0;
 
 double alfax = 0;
 double alfay = 0;
@@ -42,7 +42,7 @@ void resetCamera(){
     alfax = 0;
     alfay = 0;
     alfaz = 0;
-    yobs = 100;
+    yobs = 10;
 }
 
 void habzbuffer(){

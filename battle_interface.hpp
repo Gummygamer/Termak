@@ -111,7 +111,7 @@ void show_battle()
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     gluPerspective(80,1,0.05,200);
-    gluLookAt(xobs,yobs,zobs,0,0,0,1,0,0);
+    gluLookAt(heroX,heroY + yobs,heroZ,heroX,heroY + yobs,heroZ - 20,0,1,0);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     glRotatef(alfax,1,0,0);
