@@ -1,15 +1,15 @@
 #include <time.h>
 
-#define CIMA 3
-#define BAIXO 1
-#define ESQ 2
-#define DIR 0
+#define UP 3
+#define DOWN 1
+#define LEFT 2
+#define RIGHT 0
 
-#define VAZIO 0
-#define HEROI 1
+#define EMPTY 0
+#define HERO 1
 #define TELEPORT 2
-#define MONSTRO 3
-#define BLOCO 4
+#define MONSTER 3
+#define BLOCK 4
 
 #define DELTA 0.05
 
@@ -28,7 +28,7 @@ int lhero,chero;
 int xmapa,ymapa;
 /* This function analises the string extracted from the map file, converts the map's line number into str and returns the characteres number in it. */
 /* function that analyzes the map file string, places the number of lines in str and returns the digit count */
-string extraidim1()
+string extractDim1()
 {
     char atual;
     int cont = 0;
@@ -50,7 +50,7 @@ string extraidim1()
 
 /* analogous to the previous function for the column count */
 
-string extraidim2(){
+string extractDim2(){
     char atual = 'o';
     int cont = 0;
 
@@ -74,7 +74,7 @@ string extraidim2(){
 
 
 /* function that adds a reference to the file corresponding to element a of the sequence into gameMap[b][c] and stores its name size in *d */
-void analisaconteudo(int a,int b,int c,int *d){
+void analyzeContent(int a,int b,int c,int *d){
     int cont=a+1;
     char arquivo[100];
     char atual;
@@ -93,27 +93,27 @@ void analisaconteudo(int a,int b,int c,int *d){
 }
 
 /* function that converts sequence element a into gameMap[b][c] */
-int analisacharmapabruto(int a,int b,int c,int *d){
+int analyzeRawMapChar(int a,int b,int c,int *d){
     int rot=0;
     switch (vetormapa[a]){
     case '.':
-        rot=gameMap[b][c].rotulo=BLOCO;
+        rot=gameMap[b][c].rotulo=BLOCK;
         break;
     case 'v':
-        rot=gameMap[b][c].rotulo=VAZIO;
+        rot=gameMap[b][c].rotulo=EMPTY;
         break;
     case 'h':
-        rot=gameMap[b][c].rotulo=HEROI;
+        rot=gameMap[b][c].rotulo=HERO;
         lhero = b;
         chero = c;
         break;
     case '-':
         rot=gameMap[b][c].rotulo=TELEPORT;
-        analisaconteudo(a,b,c,d);
+        analyzeContent(a,b,c,d);
         break;
     case '*':
-        rot=gameMap[b][c].rotulo=MONSTRO;
-        analisaconteudo(a,b,c,d);
+        rot=gameMap[b][c].rotulo=MONSTER;
+        analyzeContent(a,b,c,d);
     }
     return rot;
 }
@@ -124,15 +124,15 @@ void loadMap(string s)
 
     int cont,cont1,cont2,tamydomap,tamxdomap,inu=0,rot;
     string xdomap,ydomap,arquivo;
-    //concatDirExt("mapas/",a,".map",&arquivo);
+    //concatDirExt("maps/",a,".map",&arquivo);
 
-    arquivo = "mapas/" + s + ".map";
+    arquivo = "maps/" + s + ".map";
 
     vetormapa = loadFile(arquivo.c_str());
 
     //printf(".map ok\n");
-    ydomap = extraidim1();
-    xdomap = extraidim2();
+    ydomap = extractDim1();
+    xdomap = extractDim2();
 
     ymapa = stringToInt(ydomap);
     xmapa = stringToInt(xdomap);
@@ -148,37 +148,37 @@ void loadMap(string s)
     cont=tamxdomap+tamydomap+2;
     /* essa parte traduz a seqüência carregada do arquivo em casas do mapa de jogo.*/
     for (cont1 = 0;cont1 < ymapa;++cont1) for (cont2 = 0;cont2 < xmapa;++cont2){
-            rot=analisacharmapabruto(cont,cont1,cont2,&inu);
-            if (rot==TELEPORT || rot==MONSTRO) cont+=inu;
+            rot=analyzeRawMapChar(cont,cont1,cont2,&inu);
+            if (rot==TELEPORT || rot==MONSTER) cont+=inu;
             cont++;
 
             gameMap[cont1][cont2].interpolacao = 1;
-            gameMap[cont1][cont2].orientacao = DIR;
+            gameMap[cont1][cont2].orientacao = RIGHT;
         }
     free(vetormapa);
 }
 
 /* the following functions evaluate whether gameMap[a][b] contains a given element */
 
-bool bloco(int a,int b){
-    if (gameMap[a][b].rotulo==BLOCO) return true;
+bool isBlock(int a,int b){
+    if (gameMap[a][b].rotulo==BLOCK) return true;
     return false;
 }
 
-bool hero(int a,int b){
-    if (gameMap[a][b].rotulo==HEROI) return true;
+bool isHero(int a,int b){
+    if (gameMap[a][b].rotulo==HERO) return true;
     return false;
 }
-bool monster(int a,int b){
-    if (gameMap[a][b].rotulo==MONSTRO) return true;
+bool isMonster(int a,int b){
+    if (gameMap[a][b].rotulo==MONSTER) return true;
     return false;
 }
-bool tel(int a,int b){
+bool isTeleport(int a,int b){
     if (gameMap[a][b].rotulo==TELEPORT) return true;
     return false;
 }
-bool vazio(int a,int b){
-    if (gameMap[a][b].rotulo==VAZIO) return true;
+bool isEmpty(int a,int b){
+    if (gameMap[a][b].rotulo==EMPTY) return true;
     return false;
 }
 
@@ -212,7 +212,7 @@ void battle(char* a){
     monsterY = 10;
     monsterZ = 50;
 
-    modo = BATALHA;
+    modo = BATTLE;
 
 }
 
@@ -220,32 +220,32 @@ void avaliamov(int lin,int col,int dir){
     int novalin = lin,novacol = col;
 
     switch (dir){
-    case CIMA:
+    case UP:
         if (lin > 0) novalin--;
         break;
-    case BAIXO:
+    case DOWN:
         if (lin < ymapa - 1) novalin++;
         break;
-    case ESQ:
+    case LEFT:
         if (col > 0) novacol--;
         break;
-    case DIR:
+    case RIGHT:
         if (col < xmapa - 1) novacol++;
         break;
     }
 
     if (gameMap[lin][col].interpolacao > 1-DELTA){
 
-        if (hero(lin,col)){
+        if (isHero(lin,col)){
 
-            if (bloco(novalin,novacol)){
+            if (isBlock(novalin,novacol)){
                 gameMap[lin][col].orientacao = dir;
                 return;
             }
 
-            if (vazio(novalin,novacol)){
-                gameMap[lin][col].rotulo = VAZIO;
-                gameMap[novalin][novacol].rotulo = HEROI;
+            if (isEmpty(novalin,novacol)){
+                gameMap[lin][col].rotulo = EMPTY;
+                gameMap[novalin][novacol].rotulo = HERO;
                 gameMap[novalin][novacol].orientacao = dir;
                 gameMap[novalin][novacol].interpolacao = 0;
                 lhero = novalin;
@@ -253,39 +253,39 @@ void avaliamov(int lin,int col,int dir){
                 return;
             }
 
-            if (monster(novalin,novacol)){
+            if (isMonster(novalin,novacol)){
                 gameMap[lin][col].orientacao = dir;
                 battle(gameMap[novalin][novacol].conteudo);
-                gameMap[novalin][novacol].rotulo = VAZIO;
+                gameMap[novalin][novacol].rotulo = EMPTY;
                 return;
             }
 
-            if (tel(novalin,novacol)){
+            if (isTeleport(novalin,novacol)){
                 loadMap(gameMap[novalin][novacol].conteudo);
                 gameMap[lhero][chero].orientacao = dir;
                 return;
             }
         }
 
-        if (monster(lin,col)){
-            if (bloco(novalin,novacol)){
+        if (isMonster(lin,col)){
+            if (isBlock(novalin,novacol)){
                 gameMap[lin][col].orientacao = dir;
                 return;
             }
 
-            if (vazio(novalin,novacol)){
-                gameMap[lin][col].rotulo = VAZIO;
-                gameMap[novalin][novacol].rotulo = MONSTRO;
+            if (isEmpty(novalin,novacol)){
+                gameMap[lin][col].rotulo = EMPTY;
+                gameMap[novalin][novacol].rotulo = MONSTER;
                 gameMap[novalin][novacol].orientacao = dir;
                 gameMap[novalin][novacol].conteudo = gameMap[lin][col].conteudo;
                 gameMap[novalin][novacol].interpolacao = 0;
                 return;
             }
 
-            if (hero(novalin,novacol)){
+            if (isHero(novalin,novacol)){
                 char* nome = gameMap[lin][col].conteudo;
                 battle(nome);
-                gameMap[lin][col].rotulo = VAZIO;
+                gameMap[lin][col].rotulo = EMPTY;
                 return;
             }
         }
@@ -294,17 +294,17 @@ void avaliamov(int lin,int col,int dir){
 
 }
 
-/* function that makes the monster at gameMap[a][b] move */
+/* function that makes the isMonster at gameMap[a][b] move */
 void avaliamovmonster(int a,int b){
     int escolha=rand()%4;
     avaliamov(a,b,escolha);
 }
 
-/* function that updates monster positions on the map using gameMap */
+/* function that updates isMonster positions on the map using gameMap */
 void atualizamonsters(){
     int cont1,cont2;
     for (cont1=0;cont1<ymapa;cont1++) for (cont2=0;cont2<xmapa;cont2++)
-            if (monster(cont1,cont2)) avaliamovmonster(cont1,cont2);
+            if (isMonster(cont1,cont2)) avaliamovmonster(cont1,cont2);
 }
 
 void interpolar(int lin,int col){

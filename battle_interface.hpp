@@ -1,4 +1,4 @@
-#include "baseinterface.hpp"
+#include "base_interface.hpp"
 
 #ifndef INTERFACEBAT
 
@@ -8,9 +8,9 @@
 
 #define LIML 0
 #define LIMU 75
-#define PASSO 3
-#define TESTEX (fabs(xalvo - novox) <= alcance)
-#define TESTEZ (fabs(zalvo - novoz) <= alcance)
+#define STEP 3
+#define TESTEX (fabs(xalvo - novox) <= rangeVar)
+#define TESTEZ (fabs(zalvo - novoz) <= rangeVar)
 #define TESTELIM ((novox >= LIML) && (novox <= LIMU) && (novoz >= LIML) && (novoz <= LIMU))
 
 #define RAT 1
@@ -37,10 +37,10 @@ void checkBattleEnd(){
             exit(0);
         }
 
-        reseta();
+        resetCamera();
         cout << "HP = " << her -> getHP() << endl;
 
-        modo = MAPA;
+        modo = MAP;
         return;
     }
 }
@@ -48,17 +48,17 @@ void checkBattleEnd(){
 void showEnemy(){
     /*if (monst -> getid() == CAT){
         //glTranslatef(0,9.9,0);
-        glCallList(MODCAT);
+        glCallList(MOD_CAT);
     }
-    else glCallList(MODRAT);*/
+    else glCallList(MOD_RAT);*/
 
     switch(monst -> getid())
     {
-	case CAT: glCallList(MODCAT);
+	case CAT: glCallList(MOD_CAT);
 		   break;
-	case RAT: glCallList(MODRAT);
+	case RAT: glCallList(MOD_RAT);
 		   break;
-	case SCORPION: glCallList(MODSCORPION);
+	case SCORPION: glCallList(MOD_SCORPION);
     }
 }
 
@@ -70,28 +70,28 @@ void moveMonster()
     double novoz = monsterZ;
     double xalvo = heroX;
     double zalvo = heroZ;
-    double alcance = monst -> getalcance()*PASSO;
+    double rangeVar = monst -> getRange()*STEP;
 
-    //if (monst -> getid() == CAT) alcance = 10*PASSO;
+    //if (monst -> getid() == CAT) rangeVar = 10*STEP;
 
     switch (dir)
     {
     case 0:
-        novox += PASSO;
+        novox += STEP;
         break;
     case 1:
-        novox -= PASSO;
+        novox -= STEP;
         break;
     case 2:
-        novoz += PASSO;
+        novoz += STEP;
         break;
     case 3:
-        novoz -= PASSO;
+        novoz -= STEP;
     }
 
     if (TESTEX && TESTEZ)
     {
-        her -> recebedano(monst);
+        her -> takeDamage(monst);
         checkBattleEnd();
     }
     else
@@ -122,7 +122,7 @@ void show_battle()
 
     glPushMatrix();
     glTranslatef(heroX,heroY,heroZ);
-    glCallList(MODHEROI);
+    glCallList(MOD_HERO);
     glTranslatef(15,10,15);
     //glScalef(ESCALA_BARRA,ESCALA_BARRA,her -> getHP()*ESCALA_BARRA);
     showHPBar(her -> getHP());
@@ -148,17 +148,17 @@ void keyboard_battle(unsigned char tecla,int x,int y)
     double zalvo = monsterZ;
     double novox = heroX;
     double novoz = heroZ;
-    double alcance = 2*monst->getalcance()*PASSO;
+    double rangeVar = 2*monst->getRange()*STEP;
 
     x=y;
 
-    //if (monst -> getid() == CAT) alcance = 15*PASSO;
+    //if (monst -> getid() == CAT) rangeVar = 15*STEP;
 
     switch (tecla){
     case 'q':
         if (TESTEX && TESTEZ)
         {
-            monst -> recebedano(her);
+            monst -> takeDamage(her);
             checkBattleEnd();
         }
         break;
@@ -181,7 +181,7 @@ void keyboard_battle(unsigned char tecla,int x,int y)
         alfaz--;
         break;
     case 'r':
-        reseta();
+        resetCamera();
     }
 }
 
@@ -193,25 +193,25 @@ void arrows_battle(int seta,int x,int y)
     double zalvo = monsterZ;
     double novox = heroX;
     double novoz = heroZ;
-    double alcance = PASSO;
+    double rangeVar = STEP;
 
-    if (monst -> getid() == CAT) alcance = 3*PASSO;
+    if (monst -> getid() == CAT) rangeVar = 3*STEP;
 
     if (!(TESTEX && TESTEZ))
     {
         switch (seta)
         {
         case GLUT_KEY_UP:
-            heroX += PASSO;
+            heroX += STEP;
             break;
         case GLUT_KEY_DOWN:
-            heroX -= PASSO;
+            heroX -= STEP;
             break;
         case GLUT_KEY_RIGHT:
-            heroZ += PASSO;
+            heroZ += STEP;
             break;
         case GLUT_KEY_LEFT:
-            heroZ -= PASSO;
+            heroZ -= STEP;
         }
     }
 }
