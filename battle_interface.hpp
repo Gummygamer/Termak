@@ -5,10 +5,14 @@
 #define INTERFACEBAT
 
 #include <math.h>
+#include <cctype>
+#include <string>
 
 #define LIML 0
 #define LIMU 75
 #define STEP 3
+#define BATTLE_CENTER ((LIML + LIMU) / 2.0)
+#define BATTLE_CAM_HEIGHT 100
 #define TESTEX (fabs(xalvo - novox) <= rangeVar)
 #define TESTEZ (fabs(zalvo - novoz) <= rangeVar)
 #define TESTELIM ((novox >= LIML) && (novox <= LIMU) && (novoz >= LIML) && (novoz <= LIMU))
@@ -21,7 +25,7 @@ double heroX,heroY,heroZ;
 double monsterX,monsterY,monsterZ;
 
 Fighter* her = new Fighter(15,10,10,5,666);
-Fighter* monst;
+Fighter* monst = nullptr;
 
 
 
@@ -31,16 +35,17 @@ void checkBattleEnd(){
         exit(0);
     }
 
-    if (monst -> getHP() <= 0){
-        if (monst -> getid() == CAT){
+    if (monst && monst->getHP() <= 0){
+        if (monst->getid() == CAT){
             cout << "THE END" << endl;
             exit(0);
         }
 
         resetCamera();
         cout << "HP = " << her -> getHP() << endl;
-
         modo = MAP;
+        delete monst;
+        monst = nullptr;
         return;
     }
 }
@@ -52,25 +57,30 @@ void showEnemy(){
     }
     else glCallList(MOD_RAT);*/
 
-    switch(monst -> getid())
+    if (!monst) return;
+    switch(monst->getid())
     {
-	case CAT: glCallList(MOD_CAT);
-		   break;
-	case RAT: glCallList(MOD_RAT);
-		   break;
-	case SCORPION: glCallList(MOD_SCORPION);
+        case CAT: glCallList(MOD_CAT);
+                   break;
+        case RAT: glCallList(MOD_RAT);
+                   break;
+        case SCORPION: glCallList(MOD_SCORPION);
+                   break;
+        default: break;
     }
 }
 
 
 void moveMonster()
 {
+    if (!monst) return;
+
     int dir = rand() % 4;
     double novox = monsterX;
     double novoz = monsterZ;
     double xalvo = heroX;
     double zalvo = heroZ;
-    double rangeVar = monst -> getRange()*STEP;
+    double rangeVar = monst->getRange()*STEP;
 
     //if (monst -> getid() == CAT) rangeVar = 10*STEP;
 
@@ -111,12 +121,13 @@ void show_battle()
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     gluPerspective(80,1,0.05,200);
-    gluLookAt(xobs,yobs,zobs,0,0,0,1,0,0);
+    /* top-down camera centered on the battle field */
+    gluLookAt(BATTLE_CENTER, BATTLE_CAM_HEIGHT + yobs, BATTLE_CENTER,
+              BATTLE_CENTER, 0, BATTLE_CENTER,
+              0, 0, -1);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    glRotatef(alfax,1,0,0);
-    glRotatef(alfay,0,1,0);
-    glRotatef(alfaz,0,0,1);
+    /* disable camera rotations during battle for a fixed view */
 
     showPlane();
 
@@ -128,14 +139,16 @@ void show_battle()
     showHPBar(her -> getHP());
     glPopMatrix();
 
-    glPushMatrix();
-    glTranslatef(monsterX,monsterY,monsterZ);
-    showEnemy();
-    glTranslatef(15,10,15);
-    //if(monst -> getid() == CAT) glTranslatef(0,15,-15);
-    //glScalef(ESCALA_BARRA,ESCALA_BARRA,monst -> getHP()*ESCALA_BARRA);
-    showHPBar(monst -> getHP());
-    glPopMatrix();
+    if (monst){
+        glPushMatrix();
+        glTranslatef(monsterX,monsterY,monsterZ);
+        showEnemy();
+        glTranslatef(15,10,15);
+        //if(monst -> getid() == CAT) glTranslatef(0,15,-15);
+        //glScalef(ESCALA_BARRA,ESCALA_BARRA,monst -> getHP()*ESCALA_BARRA);
+        showHPBar(monst->getHP());
+        glPopMatrix();
+    }
     glutSwapBuffers();
 
     moveMonster();
@@ -143,6 +156,8 @@ void show_battle()
 
 void keyboard_battle(unsigned char tecla,int x,int y)
 {
+
+    if (!monst) return;
 
     double xalvo = monsterX;
     double zalvo = monsterZ;
@@ -182,6 +197,7 @@ void keyboard_battle(unsigned char tecla,int x,int y)
         break;
     case 'r':
         resetCamera();
+        break;
     }
 }
 
@@ -189,29 +205,31 @@ void arrows_battle(int seta,int x,int y)
 {
     x = y;
 
+    if (!monst) return;
+
     double xalvo = monsterX;
     double zalvo = monsterZ;
     double novox = heroX;
     double novoz = heroZ;
     double rangeVar = STEP;
 
-    if (monst -> getid() == CAT) rangeVar = 3*STEP;
+    if (monst->getid() == CAT) rangeVar = 3*STEP;
 
     if (!(TESTEX && TESTEZ))
     {
         switch (seta)
         {
         case GLUT_KEY_UP:
-            heroX += STEP;
+            heroZ -= STEP;
             break;
         case GLUT_KEY_DOWN:
-            heroX -= STEP;
-            break;
-        case GLUT_KEY_RIGHT:
             heroZ += STEP;
             break;
+        case GLUT_KEY_RIGHT:
+            heroX += STEP;
+            break;
         case GLUT_KEY_LEFT:
-            heroZ -= STEP;
+            heroX -= STEP;
         }
     }
 }

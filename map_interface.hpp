@@ -19,7 +19,9 @@ inline void drawCell(const string& s){
         glCallList(modmonst);
         break;
     case 'h':
-        glCallList(MOD_HERO);
+        /* omit hero model in the overworld to keep the camera in
+           a first-person style */
+        break;
     }
     glPopMatrix();
     glTranslatef(DIMCASA,0,0);
@@ -72,15 +74,27 @@ inline void show_map(){
     glClearColor(0,0,0.5,1);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
+
+    double hx = chero * DIMCASA;
+    double hz = lhero * DIMCASA;
+    double hy = yobs;
+
+    double tx = hx;
+    double ty = hy;
+    double tz = hz;
+
+    switch(gameMap[lhero][chero].orientacao){
+        case RIGHT: tx += DIMCASA; break;
+        case LEFT:  tx -= DIMCASA; break;
+        case UP:    tz -= DIMCASA; break;
+        case DOWN:  tz += DIMCASA; break;
+    }
+
     gluPerspective(80,1,0.05,200);
-    gluLookAt(xobs,yobs,zobs,0,0,0,1,0,0);
+    gluLookAt(hx,hy,hz,tx,ty,tz,0,1,0);
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    glRotatef(-90,0,1,0);
-    glRotatef(alfax,1,0,0);
-    glRotatef(alfay,0,1,0);
-    glRotatef(alfaz,0,0,1);
 
     showMap();
     atualizamonsters();
@@ -98,6 +112,7 @@ inline void teclado_map(unsigned char tecla,int x,int y){
     case 'x': alfay--; break;
     case 'c': alfaz--; break;
     case 'r': resetCamera();
+        break;
     }
 }
 
