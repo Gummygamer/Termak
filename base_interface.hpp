@@ -197,10 +197,11 @@ void showBody(Body* c)
 
     puts("test");
 
-    for (cont = 0;cont < c->gettamanho()/*tam*/;cont++)
+    const vector<Ellipsoid>& parts = c->getbolas();
+    for (cont = 0; cont < c->gettamanho(); cont++)
     {
         puts("calling displayEllipsoid");
-        showEllipsoid(c->getbolas().at(cont));
+        showEllipsoid(parts.at(cont));
     }
 }
 

@@ -88,7 +88,7 @@ void analyzeContent(int a,int b,int c,int *d){
     }
     arquivo[*d] = '\0';
     *d=*d+1;
-    gameMap[b][c].conteudo=(char*) malloc(strlen(arquivo));
+    gameMap[b][c].conteudo=(char*) malloc(strlen(arquivo) + 1);
     strcpy(gameMap[b][c].conteudo,arquivo);
 }
 
