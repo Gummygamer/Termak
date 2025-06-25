@@ -26,6 +26,20 @@ CASA **gameMap;
 char *vetormapa;
 int lhero,chero;
 int xmapa,ymapa;
+
+/* release memory of the currently loaded map */
+void destroyMap(){
+    if(!gameMap) return;
+    for(int i=0;i<ymapa;++i){
+        for(int j=0;j<xmapa;++j){
+            if(gameMap[i][j].conteudo)
+                free(gameMap[i][j].conteudo);
+        }
+        free(gameMap[i]);
+    }
+    free(gameMap);
+    gameMap = NULL;
+}
 /* This function analises the string extracted from the map file, converts the map's line number into str and returns the characteres number in it. */
 /* function that analyzes the map file string, places the number of lines in str and returns the digit count */
 string extractDim1()
@@ -88,7 +102,7 @@ void analyzeContent(int a,int b,int c,int *d){
     }
     arquivo[*d] = '\0';
     *d=*d+1;
-    gameMap[b][c].conteudo=(char*) malloc(strlen(arquivo));
+    gameMap[b][c].conteudo=(char*) malloc(strlen(arquivo)+1);
     strcpy(gameMap[b][c].conteudo,arquivo);
 }
 
@@ -123,6 +137,9 @@ void loadMap(string s)
 {
     int cont, cont1, cont2;
 
+    /* release previous map if any */
+    destroyMap();
+
     /* create a pseudo random seed based on the map name */
     unsigned seed = 0;
     for(char c : s) seed = seed * 131 + c;
@@ -144,10 +161,11 @@ void loadMap(string s)
             gameMap[cont1][cont2].orientacao = RIGHT;
         }
 
-    /* place the hero */
-    lhero = rand() % ymapa;
-    chero = rand() % xmapa;
+    /* place the hero roughly at the centre of the map so the player can see it */
+    lhero = ymapa / 2;
+    chero = xmapa / 2;
     gameMap[lhero][chero].rotulo = HERO;
+    gameMap[lhero][chero].orientacao = RIGHT;
 
     /* randomly add blocks */
     for (cont1 = 0; cont1 < ymapa; ++cont1) for (cont2 = 0; cont2 < xmapa; ++cont2)
