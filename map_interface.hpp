@@ -19,8 +19,9 @@ inline void drawCell(const string& s){
         glCallList(modmonst);
         break;
     case 'h':
-        if (!firstPerson)
-            glCallList(MOD_HERO);
+        /* omit hero model in the overworld to keep the camera in
+           a first-person style */
+        break;
     }
     glPopMatrix();
     glTranslatef(DIMCASA,0,0);
@@ -111,7 +112,7 @@ inline void teclado_map(unsigned char tecla,int x,int y){
     case 'x': alfay--; break;
     case 'c': alfaz--; break;
     case 'r': resetCamera();
-    case 'p': toggleFirstPerson();
+        break;
     }
 }
 

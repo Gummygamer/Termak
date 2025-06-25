@@ -111,7 +111,10 @@ void show_battle()
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     gluPerspective(80,1,0.05,200);
-    gluLookAt(heroX,heroY + yobs,heroZ,heroX,heroY + yobs,heroZ - 20,0,1,0);
+    /* use a third-person camera placed behind the hero */
+    gluLookAt(heroX, heroY + yobs, heroZ + 20,
+              heroX, heroY, heroZ,
+              0, 1, 0);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     glRotatef(alfax,1,0,0);
@@ -122,8 +125,7 @@ void show_battle()
 
     glPushMatrix();
     glTranslatef(heroX,heroY,heroZ);
-    if (!firstPerson)
-        glCallList(MOD_HERO);
+    glCallList(MOD_HERO);
     glTranslatef(15,10,15);
     //glScalef(ESCALA_BARRA,ESCALA_BARRA,her -> getHP()*ESCALA_BARRA);
     showHPBar(her -> getHP());
@@ -183,9 +185,6 @@ void keyboard_battle(unsigned char tecla,int x,int y)
         break;
     case 'r':
         resetCamera();
-        break;
-    case 'p':
-        toggleFirstPerson();
         break;
     }
 }
