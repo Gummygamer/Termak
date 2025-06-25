@@ -12,7 +12,7 @@
 #define LIMU 75
 #define STEP 3
 #define BATTLE_CENTER ((LIML + LIMU) / 2.0)
-#define BATTLE_CAM_HEIGHT 80
+#define BATTLE_CAM_HEIGHT 100
 #define TESTEX (fabs(xalvo - novox) <= rangeVar)
 #define TESTEZ (fabs(zalvo - novoz) <= rangeVar)
 #define TESTELIM ((novox >= LIML) && (novox <= LIMU) && (novoz >= LIML) && (novoz <= LIMU))
@@ -220,16 +220,16 @@ void arrows_battle(int seta,int x,int y)
         switch (seta)
         {
         case GLUT_KEY_UP:
-            heroX += STEP;
+            heroZ -= STEP;
             break;
         case GLUT_KEY_DOWN:
-            heroX -= STEP;
-            break;
-        case GLUT_KEY_RIGHT:
             heroZ += STEP;
             break;
+        case GLUT_KEY_RIGHT:
+            heroX += STEP;
+            break;
         case GLUT_KEY_LEFT:
-            heroZ -= STEP;
+            heroX -= STEP;
         }
     }
 }
