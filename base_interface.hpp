@@ -31,6 +31,8 @@ double alfax = 0;
 double alfay = 0;
 double alfaz = 0;
 
+bool firstPerson = false;
+
 Body* heroBody;
 Body* ratBody;
 Body* catBody;
@@ -43,6 +45,10 @@ void resetCamera(){
     alfay = 0;
     alfaz = 0;
     yobs = 10;
+}
+
+void toggleFirstPerson(){
+    firstPerson = !firstPerson;
 }
 
 void habzbuffer(){

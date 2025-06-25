@@ -19,7 +19,8 @@ inline void drawCell(const string& s){
         glCallList(modmonst);
         break;
     case 'h':
-        glCallList(MOD_HERO);
+        if (!firstPerson)
+            glCallList(MOD_HERO);
     }
     glPopMatrix();
     glTranslatef(DIMCASA,0,0);
@@ -110,6 +111,7 @@ inline void teclado_map(unsigned char tecla,int x,int y){
     case 'x': alfay--; break;
     case 'c': alfaz--; break;
     case 'r': resetCamera();
+    case 'p': toggleFirstPerson();
     }
 }
 
