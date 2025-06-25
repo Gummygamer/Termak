@@ -11,6 +11,8 @@
 #define LIML 0
 #define LIMU 75
 #define STEP 3
+#define BATTLE_CENTER ((LIML + LIMU) / 2.0)
+#define BATTLE_CAM_HEIGHT 80
 #define TESTEX (fabs(xalvo - novox) <= rangeVar)
 #define TESTEZ (fabs(zalvo - novoz) <= rangeVar)
 #define TESTELIM ((novox >= LIML) && (novox <= LIMU) && (novoz >= LIML) && (novoz <= LIMU))
@@ -119,15 +121,13 @@ void show_battle()
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     gluPerspective(80,1,0.05,200);
-    /* use a third-person camera placed behind the hero */
-    gluLookAt(heroX, heroY + yobs, heroZ + 20,
-              heroX, heroY, heroZ,
-              0, 1, 0);
+    /* top-down camera centered on the battle field */
+    gluLookAt(BATTLE_CENTER, BATTLE_CAM_HEIGHT + yobs, BATTLE_CENTER,
+              BATTLE_CENTER, 0, BATTLE_CENTER,
+              0, 0, -1);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    glRotatef(alfax,1,0,0);
-    glRotatef(alfay,0,1,0);
-    glRotatef(alfaz,0,0,1);
+    /* disable camera rotations during battle for a fixed view */
 
     showPlane();
 
